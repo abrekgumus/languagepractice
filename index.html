@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polyglot Grand Archive</title>
+    <style>
+        :root {
+            /* These variables are dynamically injected by JS based on language */
+            --primary: #3b82f6; 
+            --primary-dark: #1d4ed8;
+            --accent: #f59e0b; 
+            --danger: #ef4444; 
+            
+            /* Light Theme */
+            --bg: #f4f7fa;
+            --paper: #ffffff;
+            --text-main: #1f2937;
+            --text-light: #6b7280;
+            --shadow: rgba(0,0,0,0.1);
+            --correct: #10b981;
+            --wrong: #ef4444;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a; 
+            --paper: #1e293b;
+            --text-main: #f3f4f6;
+            --text-light: #9ca3af;
+            --shadow: rgba(0,0,0,0.5);
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* --- SETUP / WELCOME SCREEN --- */
+        #setup-screen {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh; background: linear-gradient(135deg, var(--paper), var(--bg));
+            text-align: center; padding: 2rem;
+        }
+        .setup-box { background: var(--paper); padding: 3rem; border-radius: 20px; box-shadow: 0 20px 40px var(--shadow); max-width: 500px; width: 100%; }
+        .setup-box h1 { margin-top: 0; font-size: 2.5rem; color: var(--text-main); }
+        
+        .setup-section { margin-bottom: 2rem; text-align: left;}
+        .setup-section label { display: block; font-weight: bold; margin-bottom: 1rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px;}
+        
+        .lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .choice-btn {
+            background: var(--bg); border: 2px solid rgba(0,0,0,0.1); padding: 1rem; border-radius: 12px;
+            font-size: 1.1rem; font-weight: bold; color: var(--text-main); cursor: pointer; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+        }
+        .choice-btn:hover { border-color: #3b82f6; transform: translateY(-2px); }
+        .choice-btn.selected { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #3b82f6; }
+        
+        .start-btn { width: 100%; background: #10b981; color: white; border: none; padding: 1.2rem; border-radius: 12px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .start-btn:hover { background: #059669; }
+
+        /* --- MAIN APP VIEWS --- */
+        #app-screen { display: none; flex-direction: column; flex: 1; }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white; padding: 2rem 1rem 5rem; text-align: center; position: relative;
+            box-shadow: 0 4px 20px var(--shadow); border-bottom: 5px solid var(--accent);
+        }
+
+        .top-nav { position: absolute; top: 20px; right: 20px; left: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+        
+        .settings-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; backdrop-filter: blur(5px); }
+        .settings-btn:hover { background: rgba(255,255,255,0.3); }
+
+        /* Dark Mode Toggle */
+        .theme-switch { display: inline-block; height: 30px; position: relative; width: 54px; }
+        .theme-switch input { display: none; }
+        .slider { background-color: rgba(255,255,255,0.3); bottom: 0; cursor: pointer; left: 0; position: absolute; right: 0; top: 0; transition: .4s; border-radius: 34px; }
+        .slider:before { background-color: white; bottom: 3px; content: ""; height: 24px; left: 3px; position: absolute; transition: .4s; width: 24px; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        .symbol-wrapper { font-size: 4rem; margin: 0 auto 0.5rem; text-shadow: 0 4px 10px rgba(0,0,0,0.3); line-height: 1; }
+        header h1 { margin: 0; font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; }
+        header p { font-size: 1.1rem; opacity: 0.9; margin-top: 0.5rem; font-style: italic; }
+
+        .controls-bar { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap;}
+        .control-item { background: rgba(255,255,255,0.15); backdrop-filter: blur(5px); padding: 0.75rem 1.2rem; border-radius: 12px; display: flex; align-items: center; gap: 8px; font-weight: 600; border: 1px solid rgba(255,255,255,0.3); cursor: pointer; transition: 0.2s; }
+        .control-item:hover { background: rgba(255,255,255,0.25); }
+
+        /* --- CONTAINER --- */
+        .container { max-width: 1100px; margin: -40px auto 0; padding: 0 1.5rem 4rem; display: grid; grid-template-columns: repeat(12, 1fr); gap: 2rem; z-index: 5; position: relative; }
+
+        .card { background: var(--paper); border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px var(--shadow); transition: transform 0.3s ease; display: flex; flex-direction: column; border-top: 5px solid transparent; }
+        .card:hover { transform: translateY(-5px); }
+
+        .label { text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1.5px; font-weight: 800; color: var(--text-light); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 8px; }
+        .label::before { content: ''; display: block; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+        .target-text { font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin: 0 0 0.5rem 0; color: var(--primary); }
+        .pronunciation { font-family: 'Consolas', monospace; color: var(--accent); font-size: 0.95rem; margin-bottom: 1rem; background: rgba(0,0,0,0.03); padding: 3px 8px; border-radius: 4px; display: inline-block; }
+        .meaning { font-size: 1.15rem; line-height: 1.6; margin-top: auto; border-left: 4px solid var(--accent); padding-left: 1rem; color: var(--text-main); }
+
+        .card-special { grid-column: span 12; border-top-color: var(--accent); background: linear-gradient(to right, var(--paper), rgba(0,0,0,0.02));}
+        .card-special .label { color: var(--accent); }
+        .card-word { grid-column: span 6; border-top-color: var(--primary); }
+        .card-word .label { color: var(--primary); }
+        .card-idiom { grid-column: span 6; border-top-color: #8b5cf6; }
+        .card-idiom .label { color: #8b5cf6; }
+        .card-proverb { grid-column: span 12; border-top-color: var(--danger); }
+        .card-proverb .label { color: var(--danger); }
+
+        /* --- QUIZ --- */
+        .quiz-container { grid-column: span 12; background: var(--paper); padding: 2.5rem; border-radius: 16px; text-align: center; box-shadow: 0 4px 10px var(--shadow); margin-top: 1rem; }
+        .score-board { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1.5rem; font-weight: bold; font-size: 1.2rem; }
+        .score-correct { color: var(--correct); }
+        .score-wrong { color: var(--wrong); }
+        
+        .quiz-question { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
+        .quiz-word-box { margin: 1.5rem 0; }
+        .quiz-word { color: var(--primary); font-weight: 800; font-size: 2.5rem; line-height: 1.2; }
+        .quiz-pron { font-family: 'Consolas', monospace; color: var(--accent); font-size: 1.2rem; background: rgba(0,0,0,0.03); padding: 4px 12px; border-radius: 6px; display: inline-block; margin-top: 0.5rem; }
+
+        .quiz-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+        .quiz-btn { background: var(--bg); border: 2px solid rgba(0,0,0,0.1); padding: 1.2rem; border-radius: 12px; font-size: 1.05rem; font-weight: 600; color: var(--text-main); cursor: pointer; transition: all 0.2s; }
+        .quiz-btn:hover:not([disabled]) { border-color: var(--primary); }
+        .quiz-btn.correct { background: rgba(16, 185, 129, 0.1); border-color: var(--correct); color: var(--correct); }
+        .quiz-btn.wrong { background: rgba(239, 68, 68, 0.1); border-color: var(--wrong); color: var(--wrong); opacity: 0.6; }
+
+        .next-btn { margin-top: 2rem; background: var(--primary); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: none; transition: background 0.2s; }
+        .next-btn:hover { background: var(--primary-dark); }
+
+        /* --- CALENDAR MODAL --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(3px); }
+        .modal { background: var(--paper); padding: 2rem; border-radius: 16px; width: 90%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; }
+        .modal h3 { margin-top: 0; color: var(--text-main); }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-weight: bold;}
+        .cal-nav { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--primary); }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .cal-day-name { font-size: 0.8rem; color: var(--text-light); font-weight: bold; padding-bottom: 5px; }
+        .cal-cell { padding: 10px 0; border-radius: 8px; font-size: 0.9rem; cursor: pointer; color: var(--text-main); background: var(--bg); transition: 0.2s; }
+        .cal-cell:hover:not(.empty) { background: rgba(0,0,0,0.1); }
+        .cal-cell.empty { background: transparent; cursor: default; }
+        .cal-cell.active-day { background: var(--correct); color: white; font-weight: bold; }
+        .cal-cell.selected-day { border: 2px solid var(--primary); transform: scale(1.1); }
+        .close-modal { margin-top: 1.5rem; background: var(--bg); border: none; padding: 0.5rem 1.5rem; border-radius: 8px; cursor: pointer; color: var(--text-main); font-weight: bold; }
+
+        @media (max-width: 768px) {
+            .card-word, .card-idiom { grid-column: span 12; }
+            header h1 { font-size: 2rem; }
+            .lang-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="setup-screen">
+    <div class="setup-box">
+        <h1 id="ui-setup-title">Polyglot Archive</h1>
+        
+        <div class="setup-section">
+            <label id="ui-setup-target">I want to learn:</label>
+            <div class="lang-grid" id="target-lang-grid">
+                </div>
+        </div>
+
+        <div class="setup-section">
+            <label id="ui-setup-interface">Interface Language:</label>
+            <div class="lang-grid">
+                <button class="choice-btn" id="btn-int-en" onclick="selectInterface('en')">🇬🇧 English</button>
+                <button class="choice-btn" id="btn-int-tr" onclick="selectInterface('tr')">🇹🇷 Türkçe</button>
+            </div>
+        </div>
+
+        <button class="start-btn" id="ui-setup-start" onclick="startApp()">Start Learning</button>
+    </div>
+</div>
+
+<div id="app-screen">
+    <header>
+        <div class="top-nav">
+            <button class="settings-btn" id="ui-nav-settings" onclick="openSettings()">⚙ Settings</button>
+            <label class="theme-switch" title="Toggle Dark Mode">
+                <input type="checkbox" id="theme-toggle" />
+                <div class="slider"></div>
+            </label>
+        </div>
+
+        <div class="symbol-wrapper" id="header-symbol">🌍</div>
+        <h1 id="header-title">Archive</h1>
+        <p id="ui-header-sub">Daily Words, Idioms & Proverbs</p>
+
+        <div class="controls-bar">
+            <div class="control-item" onclick="openCalendar()">
+                <span>📅</span> <span id="current-date-display">Today</span>
+            </div>
+            <div class="control-item">
+                <span>🔥</span> <span id="streak-count">0</span> <span id="ui-header-streak">Day Streak</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card card-special">
+            <div class="label" id="ui-lbl-special">Cultural Feature</div>
+            <h2 class="target-text" id="special-t">...</h2>
+            <div class="pronunciation" id="special-p">...</div>
+            <div class="meaning" id="special-m">...</div>
+        </div>
+
+        <div class="card card-word">
+            <div class="label" id="ui-lbl-word">Word of the Day</div>
+            <h2 class="target-text" id="word-t">...</h2>
+            <div class="pronunciation" id="word-p">...</div>
+            <div class="meaning" id="word-m">...</div>
+        </div>
+
+        <div class="card card-idiom">
+            <div class="label" id="ui-lbl-idiom">Idiom of the Day</div>
+            <h2 class="target-text" id="idiom-t">...</h2>
+            <div class="pronunciation" id="idiom-p">...</div>
+            <div class="meaning" id="idiom-m">...</div>
+        </div>
+
+        <div class="card card-proverb">
+            <div class="label" id="ui-lbl-proverb">Proverb of the Day</div>
+            <h2 class="target-text" id="proverb-t">...</h2>
+            <div class="pronunciation" id="proverb-p">...</div>
+            <div class="meaning" id="proverb-m">...</div>
+        </div>
+
+        <div class="quiz-container">
+            <div class="score-board">
+                <div class="score-correct">✔ <span id="score-correct">0</span></div>
+                <div class="score-wrong">✖ <span id="score-wrong">0</span></div>
+            </div>
+            
+            <div class="label" style="justify-content: center;" id="ui-lbl-challenge">Knowledge Check</div>
+            <div class="quiz-question" id="ui-quiz-q">What does this word mean?</div>
+            
+            <div class="quiz-word-box">
+                <div class="quiz-word" id="quiz-question"></div>
+                <div class="quiz-pron" id="quiz-pronunciation"></div>
+            </div>
+            
+            <div class="quiz-grid" id="quiz-options"></div>
+            <div id="quiz-feedback" style="margin-top:1.5rem; font-weight:800; min-height:1.5em; color:var(--text-main);"></div>
+            
+            <button class="next-btn" id="next-btn" onclick="setupQuiz()"></button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="calendar-modal">
+    <div class="modal">
+        <h3 id="ui-cal-title">Activity Calendar</h3>
+        <div class="cal-header">
+            <button class="cal-nav" onclick="changeCalMonth(-1)">❮</button>
+            <span id="cal-month-year">...</span>
+            <button class="cal-nav" onclick="changeCalMonth(1)">❯</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div style="font-size:0.75rem; margin-top:10px; color:var(--text-light);">
+            <span style="display:inline-block; width:10px; height:10px; background:var(--correct); border-radius:2px;"></span> = <span id="ui-cal-practiced">Practiced</span>
+        </div>
+        <button class="close-modal" onclick="closeCalendar()" id="ui-cal-close">Close</button>
+    </div>
+</div>
+
+<script>
+    /* =========================================================================
+       1. CONFIGURATION (Scalability Layer)
+       To add a new language, just add it to CONFIG and populate DB below.
+    ========================================================================= */
+    const CONFIG = {
+        fr: { 
+            id: 'fr', 
+            name: { en: "French", tr: "Fransızca" }, 
+            colors: { primary: "#0055A4", dark: "#003d7a", accent: "#EF4135", danger: "#27ae60" }, 
+            symbol: "⚜️" 
+        },
+        mn: { 
+            id: 'mn', 
+            name: { en: "Mongolian", tr: "Moğolca" }, 
+            colors: { primary: "#0066B3", dark: "#004d88", accent: "#FFD900", danger: "#DA2032" }, 
+            symbol: "🛕" 
+        },
+        tr: { 
+            id: 'tr', 
+            name: { en: "Turkish", tr: "Türkçe" }, 
+            colors: { primary: "#c0392b", dark: "#922b21", accent: "#1abc9c", danger: "#2980b9" }, 
+            symbol: "🧿" 
+        }
+    };
+
+    const UI_I18N = {
+        en: {
+            setupTitle: "Welcome to Polyglot Archive", setupTarget: "I want to learn:", setupInt: "Interface Language:", setupStart: "Start Learning",
+            navSettings: "⚙ Settings", headerSub: "Daily Words, Idioms & Proverbs", headerStreak: "Day Streak",
+            lblSpecial: "Cultural Feature", lblWord: "Word of the Day", lblIdiom: "Idiom of the Day", lblProverb: "Proverb of the Day", lblChallenge: "Knowledge Check",
+            quizQ: "What does this mean?", nextBtn: "Next Question ➔",
+            correct: "Correct! 🎉", wrong: "Incorrect. The answer is:",
+            today: "Today", calTitle: "Activity Calendar", calPracticed: "Practiced", calClose: "Close",
+            days: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'], months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        },
+        tr: {
+            setupTitle: "Poliglot Hazinesine Hoş Geldiniz", setupTarget: "Öğrenmek İstediğim Dil:", setupInt: "Arayüz Dili:", setupStart: "Öğrenmeye Başla",
+            navSettings: "⚙ Ayarlar", headerSub: "Günlük Kelimeler, Deyimler ve Atasözleri", headerStreak: "Gün Serisi",
+            lblSpecial: "Ayın Kültürel Kelimesi", lblWord: "Günün Kelimesi", lblIdiom: "Günün Deyimi", lblProverb: "Günün Atasözü", lblChallenge: "Kendini Dene",
+            quizQ: "Bunun anlamı nedir?", nextBtn: "Sıradaki Soru ➔",
+            correct: "Doğru! 🎉", wrong: "Yanlış. Doğru cevap:",
+            today: "Bugün", calTitle: "Aktivite Takvimi", calPracticed: "Çalışıldı", calClose: "Kapat",
+            days: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'], months: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
+        }
+    };
+
+    /* =========================================================================
+       2. DATABASE (Dual Translation)
+       Each entry requires: t (target), p (pronunciation), en (English), tr (Turkish)
+    ========================================================================= */
+    const DB = {
+        fr: {
+            words: [
+                {t:"Maison", p:"Me-zon", en:"House/Home", tr:"Ev"},
+                {t:"Chat", p:"Şa", en:"Cat", tr:"Kedi"},
+                {t:"Chien", p:"Şiyen", en:"Dog", tr:"Köpek"},
+                {t:"Voiture", p:"Vua-tür", en:"Car", tr:"Araba"},
+                {t:"Livre", p:"Liv-r", en:"Book", tr:"Kitap"},
+                {t:"Ami", p:"A-mi", en:"Friend", tr:"Arkadaş"},
+                {t:"Soleil", p:"So-ley", en:"Sun", tr:"Güneş"},
+                {t:"Eau", p:"O", en:"Water", tr:"Su"},
+                {t:"Temps", p:"Tan", en:"Time/Weather", tr:"Zaman/Hava"},
+                {t:"Heureux", p:"Ö-rö", en:"Happy", tr:"Mutlu"}
+            ],
+            idioms: [
+                {t:"Poser un lapin", p:"Po-ze an la-pen", en:"To stand someone up. (Lit: Put a rabbit)", tr:"Birini ekmek. (Kelime: Tavşan koymak)"},
+                {t:"Avoir le cafard", p:"A-vuar lö ka-far", en:"To feel depressed. (Lit: Have the cockroach)", tr:"Depresif hissetmek. (Kelime: Hamamböceğine sahip olmak)"},
+                {t:"Tomber dans les pommes", p:"Tom-be dan le pom", en:"To faint. (Lit: Fall in the apples)", tr:"Bayılmak. (Kelime: Elmalara düşmek)"},
+                {t:"Avoir la pêche", p:"A-vuar la peş", en:"To be full of energy. (Lit: Have the peach)", tr:"Enerjik olmak. (Kelime: Şeftaliye sahip olmak)"},
+                {t:"Faire la grasse matinée", p:"Fer la gras ma-ti-ne", en:"To sleep in. (Lit: Make the fat morning)", tr:"Öğlene kadar uyumak. (Kelime: Yağlı sabah yapmak)"}
+            ],
+            proverbs: [
+                {t:"Qui vivra verra", p:"Ki viv-ra ve-ra", en:"Time will tell. (Lit: Who lives will see)", tr:"Zaman gösterir. (Kelime: Yaşayan görecek)"},
+                {t:"Mieux vaut tard que jamais", p:"Miyö vo tar kö ja-me", en:"Better late than never.", tr:"Geç olsun güç olmasın."},
+                {t:"L'habit ne fait pas le moine", p:"La-bi nö fe pa lö muan", en:"Don't judge a book by its cover. (Lit: Habit doesn't make the monk)", tr:"Görünüşe aldanma. (Kelime: Kıyafet keşiş yapmaz)"},
+                {t:"Vouloir, c'est pouvoir", p:"Vu-luar, se pu-vuar", en:"Where there is a will, there is a way.", tr:"İsteyen başarır. (Kelime: İstemek yapabilmektir)"}
+            ],
+            specials: [
+                {t:"Déjà vu", p:"De-ja vü", en:"The feeling of having already experienced a situation.", tr:"Daha önce yaşanmışlık hissi."},
+                {t:"Flâneur", p:"Fla-nör", en:"A person of leisure, wandering the city streets.", tr:"Şehirde aylak aylak dolaşan kişi."},
+                {t:"Savoir-vivre", p:"Sa-vuar viv-r", en:"Knowledge of the world and the ways of polite society.", tr:"Görgü kuralları, yaşamayı bilmek."}
+            ]
+        },
+        mn: {
+            words: [
+                {t:"Гэр", p:"Ger", en:"Home/Yurt", tr:"Ev/Çadır"},
+                {t:"Ус", p:"Us", en:"Water", tr:"Su"},
+                {t:"Морь", p:"Mori", en:"Horse", tr:"At"},
+                {t:"Тэнгэр", p:"Tenger", en:"Sky/Heaven", tr:"Gökyüzü/Tengri"},
+                {t:"Найз", p:"Naiz", en:"Friend", tr:"Arkadaş"},
+                {t:"Салхи", p:"Salkhi", en:"Wind", tr:"Rüzgar"},
+                {t:"Гал", p:"Gal", en:"Fire", tr:"Ateş"},
+                {t:"Өдөр", p:"Ödör", en:"Day", tr:"Gün"},
+                {t:"Зам", p:"Zam", en:"Road", tr:"Yol"},
+                {t:"Сайн", p:"Sain", en:"Good", tr:"İyi"}
+            ],
+            idioms: [
+                {t:"Чихэн дээр цэцэг ургах", p:"Chikhen deer tsetseg urgakh", en:"To be flattered. (Lit: Flowers on ears)", tr:"Çok gururlanmak. (Kelime: Kulaklarda çiçek açması)"},
+                {t:"Мориноос унах", p:"Morinoos unakh", en:"To fail at a task. (Lit: Fall from horse)", tr:"Bir işte başarısız olmak. (Kelime: Attan düşmek)"},
+                {t:"Гар цайлгах", p:"Gar tsailgakh", en:"To give a tip/gift. (Lit: Make hands white)", tr:"Hediye/bahşiş vermek. (Kelime: Elleri beyazlatmak)"},
+                {t:"Салхи оруулах", p:"Salkhi oruulakh", en:"To get fresh air. (Lit: Let wind enter)", tr:"Hava almak. (Kelime: Rüzgar sokmak)"}
+            ],
+            proverbs: [
+                {t:"Хоосон сав дуу ихтэй", p:"Khooson sav duu ikhtei", en:"Empty vessels make the most noise.", tr:"Boş teneke çok ses çıkarır."},
+                {t:"Олон хавар нэгэндээ", p:"Olon khavar negendee", en:"You can't get away with bad deeds forever.", tr:"Su testisi su yolunda kırılır."},
+                {t:"Дусал дуслаар далай болно", p:"Dusal duslaar dalai bolno", en:"Drop by drop becomes an ocean.", tr:"Damlaya damlaya göl olur."}
+            ],
+            specials: [
+                {t:"Айраг", p:"Airag", en:"Fermented mare's milk beverage.", tr:"Kımız (Fermente kısrak sütü)."},
+                {t:"Наадам", p:"Naadam", en:"Traditional summer festival (wrestling, racing, archery).", tr:"Geleneksel yaz festivali."},
+                {t:"Морин хуур", p:"Morin Khuur", en:"The 'Horsehead fiddle' instrument.", tr:"Geleneksel at kafalı yaylı çalgı."}
+            ]
+        },
+        tr: {
+            words: [
+                {t:"Teşekkürler", p:"Teh-shek-kur-ler", en:"Thank you", tr:"Teşekkürler"},
+                {t:"Arkadaş", p:"Ar-ka-dash", en:"Friend", tr:"Arkadaş"},
+                {t:"Kahvaltı", p:"Kah-val-tuh", en:"Breakfast", tr:"Kahvaltı"},
+                {t:"Deniz", p:"Deh-niz", en:"Sea", tr:"Deniz"},
+                {t:"Bilgisayar", p:"Bil-gi-sa-yar", en:"Computer", tr:"Bilgisayar"},
+                {t:"Umut", p:"Oo-moot", en:"Hope", tr:"Umut"},
+                {t:"Zaman", p:"Za-man", en:"Time", tr:"Zaman"},
+                {t:"Gökyüzü", p:"Gok-yoo-zoo", en:"Sky", tr:"Gökyüzü"},
+                {t:"Aşk", p:"Ash-k", en:"Love", tr:"Aşk"},
+                {t:"Yolculuk", p:"Yol-ju-look", en:"Journey", tr:"Yolculuk"}
+            ],
+            idioms: [
+                {t:"Göze girmek", p:"Go-ze gir-mek", en:"To gain favor. (Lit: Enter the eye)", tr:"Göze girmek"},
+                {t:"Etekleri zil çalmak", p:"E-tek-le-ri zil chal-mak", en:"To be extremely excited. (Lit: Skirt bells ringing)", tr:"Etekleri zil çalmak"},
+                {t:"Pireyi deve yapmak", p:"Pi-re-yi de-ve yap-mak", en:"To exaggerate. (Lit: Make a camel out of a flea)", tr:"Pireyi deve yapmak"},
+                {t:"Çam devirmek", p:"Cham de-vir-mek", en:"To make a blunder. (Lit: Knock down a pine tree)", tr:"Çam devirmek"}
+            ],
+            proverbs: [
+                {t:"Damlaya damlaya göl olur", p:"Dam-la-ya dam-la-ya gol o-lur", en:"Little things add up. (Lit: Drop by drop becomes lake)", tr:"Damlaya damlaya göl olur"},
+                {t:"Acele işe şeytan karışır", p:"A-je-le i-she shey-tan ka-ri-shir", en:"Haste makes waste. (Lit: Devil mixes with hurried work)", tr:"Acele işe şeytan karışır"},
+                {t:"Gülü seven dikenine katlanır", p:"Goo-loo se-ven di-ke-ni-ne kat-la-nir", en:"Accept the bad with the good. (Lit: Rose lover bears thorns)", tr:"Gülü seven dikenine katlanır"}
+            ],
+            specials: [
+                {t:"Yakamoz", p:"Ya-ka-moz", en:"Phosphorescence of the moon on water.", tr:"Yakamoz"},
+                {t:"Hüzün", p:"Hoo-zoon", en:"Melancholic nostalgia.", tr:"Hüzün"},
+                {t:"Kolay gelsin", p:"Ko-lay gel-sin", en:"May it come easy (encouragement).", tr:"Kolay gelsin"}
+            ]
+        }
+    };
+
+    /* =========================================================================
+       3. STATE MANAGEMENT
+    ========================================================================= */
+    let state = {
+        target: null, // 'fr', 'mn', 'tr'
+        interface: 'en', // 'en', 'tr'
+        theme: 'light',
+        date: new Date(),
+        calDate: new Date()
+    };
+
+    function initSettings() {
+        // Load settings
+        state.target = localStorage.getItem('poly_target');
+        state.interface = localStorage.getItem('poly_interface') || 'en';
+        state.theme = localStorage.getItem('poly_theme') || 'light';
+
+        // Apply theme
+        const themeToggle = document.getElementById('theme-toggle');
+        if (state.theme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggle.checked = true;
+        }
+        themeToggle.addEventListener('change', (e) => {
+            state.theme = e.target.checked ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', state.theme);
+            localStorage.setItem('poly_theme', state.theme);
+        });
+
+        // Build Setup Screen
+        buildTargetGrid();
+        updateInterfaceButtons();
+        translateSetup();
+
+        // Router
+        if (state.target && CONFIG[state.target]) {
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('app-screen').style.display = 'flex';
+            loadApp();
+        }
+    }
+
+    /* --- SETUP FUNCTIONS --- */
+    function buildTargetGrid() {
+        const grid = document.getElementById('target-lang-grid');
+        grid.innerHTML = '';
+        for (const [key, lang] of Object.entries(CONFIG)) {
+            const btn = document.createElement('button');
+            btn.className = `choice-btn ${state.target === key ? 'selected' : ''}`;
+            btn.innerHTML = `<span style="font-size:1.5rem">${lang.symbol}</span> ${lang.name[state.interface]}`;
+            btn.onclick = () => {
+                state.target = key;
+                buildTargetGrid(); // refresh selections
+            };
+            grid.appendChild(btn);
+        }
+    }
+
+    function selectInterface(lang) {
+        state.interface = lang;
+        updateInterfaceButtons();
+        translateSetup();
+        buildTargetGrid(); // Update names in target grid
+    }
+
+    function updateInterfaceButtons() {
+        document.getElementById('btn-int-en').classList.toggle('selected', state.interface === 'en');
+        document.getElementById('btn-int-tr').classList.toggle('selected', state.interface === 'tr');
+    }
+
+    function translateSetup() {
+        const dict = UI_I18N[state.interface];
+        document.getElementById('ui-setup-title').textContent = dict.setupTitle;
+        document.getElementById('ui-setup-target').textContent = dict.setupTarget;
+        document.getElementById('ui-setup-interface').textContent = dict.setupInt;
+        document.getElementById('ui-setup-start').textContent = dict.setupStart;
+    }
+
+    function startApp() {
+        if(!state.target) return alert("Please select a language to learn.");
+        localStorage.setItem('poly_target', state.target);
+        localStorage.setItem('poly_interface', state.interface);
+        
+        document.getElementById('setup-screen').style.display = 'none';
+        document.getElementById('app-screen').style.display = 'flex';
+        loadApp();
+    }
+
+    function openSettings() {
+        document.getElementById('app-screen').style.display = 'none';
+        document.getElementById('setup-screen').style.display = 'flex';
+    }
+
+    /* =========================================================================
+       4. MAIN APP ENGINE
+    ========================================================================= */
+    function loadApp() {
+        applyLanguageStyling();
+        applyInterfaceTranslations();
+        loadStreakAndStats();
+        renderContent();
+        setupQuiz();
+    }
+
+    function applyLanguageStyling() {
+        const conf = CONFIG[state.target];
+        document.documentElement.style.setProperty('--primary', conf.colors.primary);
+        document.documentElement.style.setProperty('--primary-dark', conf.colors.dark);
+        document.documentElement.style.setProperty('--accent', conf.colors.accent);
+        document.documentElement.style.setProperty('--danger', conf.colors.danger);
+        
+        document.getElementById('header-symbol').innerHTML = conf.symbol;
+        document.getElementById('header-title').textContent = conf.name[state.interface] + " Archive";
+    }
+
+    function applyInterfaceTranslations() {
+        const dict = UI_I18N[state.interface];
+        document.getElementById('ui-nav-settings').textContent = dict.navSettings;
+        document.getElementById('ui-header-sub').textContent = dict.headerSub;
+        document.getElementById('ui-header-streak').textContent = dict.streak;
+        document.getElementById('ui-lbl-special').textContent = dict.lblSpecial;
+        document.getElementById('ui-lbl-word').textContent = dict.lblWord;
+        document.getElementById('ui-lbl-idiom').textContent = dict.lblIdiom;
+        document.getElementById('ui-lbl-proverb').textContent = dict.lblProverb;
+        document.getElementById('ui-lbl-challenge').textContent = dict.lblChallenge;
+        document.getElementById('ui-quiz-q').textContent = dict.quizQ;
+        document.getElementById('next-btn').textContent = dict.nextBtn;
+        
+        // Calendar translations
+        document.getElementById('ui-cal-title').textContent = dict.calTitle;
+        document.getElementById('ui-cal-practiced').textContent = dict.practiced;
+        document.getElementById('ui-cal-close').textContent = dict.close;
+    }
+
+    function getDayOfYear(d) {
+        const start = new Date(d.getFullYear(), 0, 0);
+        return Math.floor((d - start) / 86400000);
+    }
+
+    function renderContent() {
+        // Date Display
+        const dict = UI_I18N[state.interface];
+        const today = new Date();
+        if(state.date.toDateString() === today.toDateString()) {
+            document.getElementById('current-date-display').textContent = dict.today;
+        } else {
+            document.getElementById('current-date-display').textContent = state.date.toLocaleDateString(state.interface === 'en' ? 'en-US' : 'tr-TR', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        const db = DB[state.target];
+        const doy = getDayOfYear(state.date);
+        const y = state.date.getFullYear();
+        const m = state.date.getMonth();
+
+        // Infinite Rotation Logic
+        const word = db.words[(doy + y) % db.words.length];
+        const idiom = db.idioms[(doy + 15) % db.idioms.length];
+        const proverb = db.proverbs[(doy + 30) % db.proverbs.length];
+        const special = db.specials[((y * 12) + m) % db.specials.length];
+
+        injectCard('word', word);
+        injectCard('idiom', idiom);
+        injectCard('proverb', proverb);
+        injectCard('special', special);
+    }
+
+    function injectCard(id, data) {
+        document.getElementById(`${id}-t`).textContent = data.t;
+        document.getElementById(`${id}-m`).textContent = data[state.interface];
+        document.getElementById(`${id}-p`).textContent = `/${data.p}/`;
+    }
+
+    /* =========================================================================
+       5. PROGRESS & STATS (Language Isolated)
+    ========================================================================= */
+    function getKeys() {
+        return {
+            streak: `poly_${state.target}_streak`,
+            active: `poly_${state.target}_active`,
+            stats: `poly_${state.target}_stats`
+        };
+    }
+
+    function recordActivity() {
+        const keys = getKeys();
+        const todayStr = new Date().toISOString().split("T")[0];
+        let activeDates = JSON.parse(localStorage.getItem(keys.active)) || [];
+        
+        if (!activeDates.includes(todayStr)) {
+            activeDates.push(todayStr);
+            localStorage.setItem(keys.active, JSON.stringify(activeDates));
+            calculateStreak(activeDates, keys.streak);
+        }
+    }
+
+    function calculateStreak(dates, streakKey) {
+        if(dates.length === 0) return 0;
+        dates.sort((a,b) => new Date(b) - new Date(a));
+        
+        let streak = 0;
+        let checkDate = new Date();
+        checkDate.setHours(0,0,0,0);
+        const todayStr = checkDate.toISOString().split("T")[0];
+        
+        let yesterday = new Date(checkDate);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split("T")[0];
+
+        if(!dates.includes(todayStr) && !dates.includes(yesterdayStr)) {
+            streak = 0;
+        } else {
+            let curr = new Date(dates.includes(todayStr) ? checkDate : yesterday);
+            while(true) {
+                if(dates.includes(curr.toISOString().split("T")[0])) {
+                    streak++;
+                    curr.setDate(curr.getDate() - 1);
+                } else break;
+            }
+        }
+        localStorage.setItem(streakKey, streak);
+        document.getElementById('streak-count').textContent = streak;
+    }
+
+    function loadStreakAndStats() {
+        const keys = getKeys();
+        const activeDates = JSON.parse(localStorage.getItem(keys.active)) || [];
+        calculateStreak(activeDates, keys.streak);
+
+        const todayStr = new Date().toDateString();
+        let stats = JSON.parse(localStorage.getItem(keys.stats));
+        if (!stats || stats.date !== todayStr) stats = { date: todayStr, correct: 0, wrong: 0 };
+        
+        document.getElementById('score-correct').textContent = stats.correct;
+        document.getElementById('score-wrong').textContent = stats.wrong;
+    }
+
+    function updateStats(isCorrect) {
+        const keys = getKeys();
+        const todayStr = new Date().toDateString();
+        let stats = JSON.parse(localStorage.getItem(keys.stats));
+        if (!stats || stats.date !== todayStr) stats = { date: todayStr, correct: 0, wrong: 0 };
+
+        if (isCorrect) stats.correct++; else stats.wrong++;
+        localStorage.setItem(keys.stats, JSON.stringify(stats));
+        
+        document.getElementById('score-correct').textContent = stats.correct;
+        document.getElementById('score-wrong').textContent = stats.wrong;
+    }
+
+    /* =========================================================================
+       6. QUIZ LOGIC
+    ========================================================================= */
+    function setupQuiz() {
+        const container = document.getElementById('quiz-options');
+        const feedback = document.getElementById('quiz-feedback');
+        const nextBtn = document.getElementById('next-btn');
+        const dict = UI_I18N[state.interface];
+        
+        container.innerHTML = '';
+        feedback.textContent = '';
+        nextBtn.style.display = 'none';
+
+        const db = DB[state.target].words;
+        const correctWord = db[Math.floor(Math.random() * db.length)];
+        
+        document.getElementById('quiz-question').textContent = correctWord.t;
+        document.getElementById('quiz-pronunciation').textContent = `/${correctWord.p}/`;
+
+        let options = [correctWord];
+        let safety = 0;
+        while(options.length < 4 && safety < 100) {
+            let candidate = db[Math.floor(Math.random() * db.length)];
+            if(!options.includes(candidate)) options.push(candidate);
+            safety++;
+        }
+        options.sort(() => Math.random() - 0.5);
+
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'quiz-btn';
+            btn.textContent = opt[state.interface]; 
+            
+            btn.onclick = () => {
+                document.querySelectorAll('.quiz-btn').forEach(b => b.disabled = true);
+                recordActivity();
+
+                if(opt === correctWord) {
+                    btn.classList.add('correct');
+                    feedback.textContent = dict.correct;
+                    feedback.style.color = "var(--correct)";
+                    updateStats(true);
+                } else {
+                    btn.classList.add('wrong');
+                    feedback.textContent = `${dict.wrong} ${correctWord[state.interface]}`;
+                    feedback.style.color = "var(--wrong)";
+                    Array.from(container.children).forEach(c => {
+                        if(c.textContent === correctWord[state.interface]) c.classList.add('correct');
+                    });
+                    updateStats(false);
+                }
+                nextBtn.style.display = 'inline-block';
+            };
+            container.appendChild(btn);
+        });
+    }
+
+    /* =========================================================================
+       7. CALENDAR MODAL
+    ========================================================================= */
+    function openCalendar() {
+        state.calDate = new Date(state.date);
+        buildCalendar();
+        document.getElementById('calendar-modal').style.display = 'flex';
+    }
+    
+    function closeCalendar() { document.getElementById('calendar-modal').style.display = 'none'; }
+
+    function changeCalMonth(offset) {
+        state.calDate.setMonth(state.calDate.getMonth() + offset);
+        buildCalendar();
+    }
+
+    function buildCalendar() {
+        const grid = document.getElementById('cal-grid');
+        grid.innerHTML = '';
+        const dict = UI_I18N[state.interface];
+        
+        const y = state.calDate.getFullYear();
+        const m = state.calDate.getMonth();
+        document.getElementById('cal-month-year').textContent = `${dict.months[m]} ${y}`;
+
+        dict.days.forEach(d => {
+            const el = document.createElement('div');
+            el.className = 'cal-day-name';
+            el.textContent = d;
+            grid.appendChild(el);
+        });
+
+        const firstDay = new Date(y, m, 1).getDay();
+        const daysInMonth = new Date(y, m + 1, 0).getDate();
+        const activeSet = new Set(JSON.parse(localStorage.getItem(getKeys().active)) || []);
+        
+        for(let i=0; i<firstDay; i++) {
+            const empty = document.createElement('div');
+            empty.className = 'cal-cell empty';
+            grid.appendChild(empty);
+        }
+
+        const currStr = state.date.toISOString().split("T")[0];
+
+        for(let d=1; d<=daysInMonth; d++) {
+            const cell = document.createElement('div');
+            cell.className = 'cal-cell';
+            cell.textContent = d;
+
+            const cellDate = new Date(Date.UTC(y, m, d));
+            const dateStr = cellDate.toISOString().split("T")[0];
+
+            if(activeSet.has(dateStr)) cell.classList.add('active-day');
+            if(dateStr === currStr) cell.classList.add('selected-day');
+
+            if(cellDate > new Date()) {
+                cell.style.opacity = '0.3'; cell.style.cursor = 'not-allowed';
+            } else {
+                cell.onclick = () => {
+                    state.date = new Date(y, m, d);
+                    renderContent();
+                    closeCalendar();
+                };
+            }
+            grid.appendChild(cell);
+        }
+    }
+
+    // Init
+    window.addEventListener('DOMContentLoaded', initSettings);
+
+</script>
+</body>
+</html>
