@@ -6,13 +6,11 @@
     <title>Polyglot Grand Archive</title>
     <style>
         :root {
-            /* These variables are dynamically injected by JS based on language */
             --primary: #3b82f6; 
             --primary-dark: #1d4ed8;
             --accent: #f59e0b; 
             --danger: #ef4444; 
             
-            /* Light Theme */
             --bg: #f4f7fa;
             --paper: #ffffff;
             --text-main: #1f2937;
@@ -79,7 +77,6 @@
         .settings-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; backdrop-filter: blur(5px); }
         .settings-btn:hover { background: rgba(255,255,255,0.3); }
 
-        /* Dark Mode Toggle */
         .theme-switch { display: inline-block; height: 30px; position: relative; width: 54px; }
         .theme-switch input { display: none; }
         .slider { background-color: rgba(255,255,255,0.3); bottom: 0; cursor: pointer; left: 0; position: absolute; right: 0; top: 0; transition: .4s; border-radius: 34px; }
@@ -130,7 +127,7 @@
 
         .quiz-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
         .quiz-btn { background: var(--bg); border: 2px solid rgba(0,0,0,0.1); padding: 1.2rem; border-radius: 12px; font-size: 1.05rem; font-weight: 600; color: var(--text-main); cursor: pointer; transition: all 0.2s; }
-        .quiz-btn:hover:not([disabled]) { border-color: var(--primary); }
+        .quiz-btn:hover:not([disabled]) { border-color: var(--primary); background: rgba(0,0,0,0.02);}
         .quiz-btn.correct { background: rgba(16, 185, 129, 0.1); border-color: var(--correct); color: var(--correct); }
         .quiz-btn.wrong { background: rgba(239, 68, 68, 0.1); border-color: var(--wrong); color: var(--wrong); opacity: 0.6; }
 
@@ -167,8 +164,7 @@
         
         <div class="setup-section">
             <label id="ui-setup-target">I want to learn:</label>
-            <div class="lang-grid" id="target-lang-grid">
-                </div>
+            <div class="lang-grid" id="target-lang-grid"></div>
         </div>
 
         <div class="setup-section">
@@ -276,28 +272,12 @@
 
 <script>
     /* =========================================================================
-       1. CONFIGURATION (Scalability Layer)
-       To add a new language, just add it to CONFIG and populate DB below.
+       1. CONFIGURATION
     ========================================================================= */
     const CONFIG = {
-        fr: { 
-            id: 'fr', 
-            name: { en: "French", tr: "Fransızca" }, 
-            colors: { primary: "#0055A4", dark: "#003d7a", accent: "#EF4135", danger: "#27ae60" }, 
-            symbol: "⚜️" 
-        },
-        mn: { 
-            id: 'mn', 
-            name: { en: "Mongolian", tr: "Moğolca" }, 
-            colors: { primary: "#0066B3", dark: "#004d88", accent: "#FFD900", danger: "#DA2032" }, 
-            symbol: "🛕" 
-        },
-        tr: { 
-            id: 'tr', 
-            name: { en: "Turkish", tr: "Türkçe" }, 
-            colors: { primary: "#c0392b", dark: "#922b21", accent: "#1abc9c", danger: "#2980b9" }, 
-            symbol: "🧿" 
-        }
+        fr: { id: 'fr', name: { en: "French", tr: "Fransızca" }, colors: { primary: "#0055A4", dark: "#003d7a", accent: "#EF4135", danger: "#27ae60" }, symbol: "⚜️" },
+        mn: { id: 'mn', name: { en: "Mongolian", tr: "Moğolca" }, colors: { primary: "#0066B3", dark: "#004d88", accent: "#FFD900", danger: "#DA2032" }, symbol: "🛕" },
+        tr: { id: 'tr', name: { en: "Turkish", tr: "Türkçe" }, colors: { primary: "#c0392b", dark: "#922b21", accent: "#1abc9c", danger: "#2980b9" }, symbol: "🧿" }
     };
 
     const UI_I18N = {
@@ -322,60 +302,63 @@
     };
 
     /* =========================================================================
-       2. DATABASE (Dual Translation)
-       Each entry requires: t (target), p (pronunciation), en (English), tr (Turkish)
+       2. DATABASE (Expanded for accurate randomization)
     ========================================================================= */
     const DB = {
         fr: {
             words: [
-                {t:"Maison", p:"Me-zon", en:"House/Home", tr:"Ev"},
-                {t:"Chat", p:"Şa", en:"Cat", tr:"Kedi"},
-                {t:"Chien", p:"Şiyen", en:"Dog", tr:"Köpek"},
-                {t:"Voiture", p:"Vua-tür", en:"Car", tr:"Araba"},
-                {t:"Livre", p:"Liv-r", en:"Book", tr:"Kitap"},
-                {t:"Ami", p:"A-mi", en:"Friend", tr:"Arkadaş"},
-                {t:"Soleil", p:"So-ley", en:"Sun", tr:"Güneş"},
-                {t:"Eau", p:"O", en:"Water", tr:"Su"},
-                {t:"Temps", p:"Tan", en:"Time/Weather", tr:"Zaman/Hava"},
-                {t:"Heureux", p:"Ö-rö", en:"Happy", tr:"Mutlu"}
+                {t:"Maison", p:"Me-zon", en:"House", tr:"Ev"}, {t:"Chat", p:"Şa", en:"Cat", tr:"Kedi"}, {t:"Chien", p:"Şiyen", en:"Dog", tr:"Köpek"},
+                {t:"Voiture", p:"Vua-tür", en:"Car", tr:"Araba"}, {t:"Livre", p:"Liv-r", en:"Book", tr:"Kitap"}, {t:"Ami", p:"A-mi", en:"Friend", tr:"Arkadaş"},
+                {t:"Soleil", p:"So-ley", en:"Sun", tr:"Güneş"}, {t:"Eau", p:"O", en:"Water", tr:"Su"}, {t:"Temps", p:"Tan", en:"Time/Weather", tr:"Zaman/Hava"},
+                {t:"Heureux", p:"Ö-rö", en:"Happy", tr:"Mutlu"}, {t:"Fleur", p:"Flör", en:"Flower", tr:"Çiçek"}, {t:"Arbre", p:"Ar-br", en:"Tree", tr:"Ağaç"},
+                {t:"Pain", p:"Pen", en:"Bread", tr:"Ekmek"}, {t:"Vin", p:"Ven", en:"Wine", tr:"Şarap"}, {t:"Fromage", p:"Fro-maj", en:"Cheese", tr:"Peynir"},
+                {t:"Rue", p:"Rü", en:"Street", tr:"Sokak"}, {t:"Ville", p:"Vil", en:"City", tr:"Şehir"}, {t:"Pays", p:"Pe-yi", en:"Country", tr:"Ülke"},
+                {t:"Rêve", p:"Rev", en:"Dream", tr:"Rüya"}, {t:"Matin", p:"Ma-ten", en:"Morning", tr:"Sabah"}, {t:"Nuit", p:"Nüi", en:"Night", tr:"Gece"},
+                {t:"Liberté", p:"Li-ber-te", en:"Freedom", tr:"Özgürlük"}, {t:"Vérité", p:"Ve-ri-te", en:"Truth", tr:"Gerçek"}, {t:"Cœur", p:"Kör", en:"Heart", tr:"Kalp"},
+                {t:"Sourire", p:"Su-rir", en:"Smile", tr:"Gülümseme"}, {t:"Manger", p:"Man-je", en:"To eat", tr:"Yemek yemek"}, {t:"Boire", p:"Buar", en:"To drink", tr:"İçmek"},
+                {t:"Dormir", p:"Dor-mir", en:"To sleep", tr:"Uyumak"}, {t:"Parler", p:"Par-le", en:"To speak", tr:"Konuşmak"}, {t:"Trouver", p:"Tru-ve", en:"To find", tr:"Bulmak"},
+                {t:"Nouveau", p:"Nu-vo", en:"New", tr:"Yeni"}, {t:"Vieux", p:"Viyö", en:"Old", tr:"Eski"}, {t:"Beau", p:"Bo", en:"Beautiful", tr:"Güzel"},
+                {t:"Rapide", p:"Ra-pid", en:"Fast", tr:"Hızlı"}, {t:"Facile", p:"Fa-sil", en:"Easy", tr:"Kolay"}, {t:"Difficile", p:"Di-fi-sil", en:"Difficult", tr:"Zor"}
             ],
             idioms: [
-                {t:"Poser un lapin", p:"Po-ze an la-pen", en:"To stand someone up. (Lit: Put a rabbit)", tr:"Birini ekmek. (Kelime: Tavşan koymak)"},
-                {t:"Avoir le cafard", p:"A-vuar lö ka-far", en:"To feel depressed. (Lit: Have the cockroach)", tr:"Depresif hissetmek. (Kelime: Hamamböceğine sahip olmak)"},
-                {t:"Tomber dans les pommes", p:"Tom-be dan le pom", en:"To faint. (Lit: Fall in the apples)", tr:"Bayılmak. (Kelime: Elmalara düşmek)"},
-                {t:"Avoir la pêche", p:"A-vuar la peş", en:"To be full of energy. (Lit: Have the peach)", tr:"Enerjik olmak. (Kelime: Şeftaliye sahip olmak)"},
-                {t:"Faire la grasse matinée", p:"Fer la gras ma-ti-ne", en:"To sleep in. (Lit: Make the fat morning)", tr:"Öğlene kadar uyumak. (Kelime: Yağlı sabah yapmak)"}
+                {t:"Poser un lapin", p:"Po-ze an la-pen", en:"To stand someone up.", tr:"Birini ekmek (randevuya gitmemek)."},
+                {t:"Avoir le cafard", p:"A-vuar lö ka-far", en:"To feel depressed.", tr:"Depresif hissetmek."},
+                {t:"Tomber dans les pommes", p:"Tom-be dan le pom", en:"To faint.", tr:"Bayılmak."},
+                {t:"Avoir la pêche", p:"A-vuar la peş", en:"To be full of energy.", tr:"Enerjik olmak."},
+                {t:"Faire la grasse matinée", p:"Fer la gras ma-ti-ne", en:"To sleep in.", tr:"Öğlene kadar uyumak."}
             ],
             proverbs: [
-                {t:"Qui vivra verra", p:"Ki viv-ra ve-ra", en:"Time will tell. (Lit: Who lives will see)", tr:"Zaman gösterir. (Kelime: Yaşayan görecek)"},
+                {t:"Qui vivra verra", p:"Ki viv-ra ve-ra", en:"Time will tell.", tr:"Zaman gösterir."},
                 {t:"Mieux vaut tard que jamais", p:"Miyö vo tar kö ja-me", en:"Better late than never.", tr:"Geç olsun güç olmasın."},
-                {t:"L'habit ne fait pas le moine", p:"La-bi nö fe pa lö muan", en:"Don't judge a book by its cover. (Lit: Habit doesn't make the monk)", tr:"Görünüşe aldanma. (Kelime: Kıyafet keşiş yapmaz)"},
-                {t:"Vouloir, c'est pouvoir", p:"Vu-luar, se pu-vuar", en:"Where there is a will, there is a way.", tr:"İsteyen başarır. (Kelime: İstemek yapabilmektir)"}
+                {t:"L'habit ne fait pas le moine", p:"La-bi nö fe pa lö muan", en:"Don't judge a book by its cover.", tr:"Görünüşe aldanma."},
+                {t:"Vouloir, c'est pouvoir", p:"Vu-luar, se pu-vuar", en:"Where there is a will, there is a way.", tr:"İsteyen başarır."}
             ],
             specials: [
-                {t:"Déjà vu", p:"De-ja vü", en:"The feeling of having already experienced a situation.", tr:"Daha önce yaşanmışlık hissi."},
-                {t:"Flâneur", p:"Fla-nör", en:"A person of leisure, wandering the city streets.", tr:"Şehirde aylak aylak dolaşan kişi."},
-                {t:"Savoir-vivre", p:"Sa-vuar viv-r", en:"Knowledge of the world and the ways of polite society.", tr:"Görgü kuralları, yaşamayı bilmek."}
+                {t:"Déjà vu", p:"De-ja vü", en:"Feeling of having already experienced something.", tr:"Daha önce yaşanmışlık hissi."},
+                {t:"Flâneur", p:"Fla-nör", en:"A person wandering the city streets.", tr:"Şehirde aylak aylak dolaşan kişi."},
+                {t:"Savoir-vivre", p:"Sa-vuar viv-r", en:"Knowledge of polite society.", tr:"Görgü kuralları, yaşamayı bilmek."}
             ]
         },
         mn: {
             words: [
-                {t:"Гэр", p:"Ger", en:"Home/Yurt", tr:"Ev/Çadır"},
-                {t:"Ус", p:"Us", en:"Water", tr:"Su"},
-                {t:"Морь", p:"Mori", en:"Horse", tr:"At"},
-                {t:"Тэнгэр", p:"Tenger", en:"Sky/Heaven", tr:"Gökyüzü/Tengri"},
-                {t:"Найз", p:"Naiz", en:"Friend", tr:"Arkadaş"},
-                {t:"Салхи", p:"Salkhi", en:"Wind", tr:"Rüzgar"},
-                {t:"Гал", p:"Gal", en:"Fire", tr:"Ateş"},
-                {t:"Өдөр", p:"Ödör", en:"Day", tr:"Gün"},
-                {t:"Зам", p:"Zam", en:"Road", tr:"Yol"},
-                {t:"Сайн", p:"Sain", en:"Good", tr:"İyi"}
+                {t:"Гэр", p:"Ger", en:"Home/Yurt", tr:"Ev/Çadır"}, {t:"Ус", p:"Us", en:"Water", tr:"Su"}, {t:"Морь", p:"Mori", en:"Horse", tr:"At"},
+                {t:"Тэнгэр", p:"Tenger", en:"Sky/Heaven", tr:"Gökyüzü/Tengri"}, {t:"Найз", p:"Naiz", en:"Friend", tr:"Arkadaş"}, {t:"Салхи", p:"Salkhi", en:"Wind", tr:"Rüzgar"},
+                {t:"Гал", p:"Gal", en:"Fire", tr:"Ateş"}, {t:"Өдөр", p:"Ödör", en:"Day", tr:"Gün"}, {t:"Зам", p:"Zam", en:"Road", tr:"Yol"},
+                {t:"Сайн", p:"Sain", en:"Good", tr:"İyi"}, {t:"Сүү", p:"Süü", en:"Milk", tr:"Süt"}, {t:"Талх", p:"Talkh", en:"Bread", tr:"Ekmek"},
+                {t:"Мах", p:"Makh", en:"Meat", tr:"Et"}, {t:"Нохой", p:"Nokhoi", en:"Dog", tr:"Köpek"}, {t:"Тэмээ", p:"Temee", en:"Camel", tr:"Deve"},
+                {t:"Хүн", p:"Khün", en:"Person", tr:"İnsan"}, {t:"Ээж", p:"Eej", en:"Mother", tr:"Anne"}, {t:"Аав", p:"Aav", en:"Father", tr:"Baba"},
+                {t:"Нар", p:"Nar", en:"Sun", tr:"Güneş"}, {t:"Сар", p:"Sar", en:"Moon", tr:"Ay"}, {t:"Уул", p:"Uul", en:"Mountain", tr:"Dağ"},
+                {t:"Цас", p:"Tsas", en:"Snow", tr:"Kar"}, {t:"Бороо", p:"Boroo", en:"Rain", tr:"Yağmur"}, {t:"Шөнө", p:"Shönö", en:"Night", tr:"Gece"},
+                {t:"Цаг", p:"Tsag", en:"Time", tr:"Zaman"}, {t:"Том", p:"Tom", en:"Big", tr:"Büyük"}, {t:"Жижиг", p:"Jijig", en:"Small", tr:"Küçük"},
+                {t:"Явах", p:"Yavakh", en:"To go", tr:"Gitmek"}, {t:"Ирэх", p:"Irekh", en:"To come", tr:"Gelmek"}, {t:"Идэх", p:"Idekh", en:"To eat", tr:"Yemek yemek"},
+                {t:"Унтах", p:"Untakh", en:"To sleep", tr:"Uyumak"}, {t:"Сургууль", p:"Surguuli", en:"School", tr:"Okul"}, {t:"Ном", p:"Nom", en:"Book", tr:"Kitap"},
+                {t:"Мөнгө", p:"Möngö", en:"Money", tr:"Para"}, {t:"Хайр", p:"Khair", en:"Love", tr:"Aşk"}
             ],
             idioms: [
-                {t:"Чихэн дээр цэцэг ургах", p:"Chikhen deer tsetseg urgakh", en:"To be flattered. (Lit: Flowers on ears)", tr:"Çok gururlanmak. (Kelime: Kulaklarda çiçek açması)"},
-                {t:"Мориноос унах", p:"Morinoos unakh", en:"To fail at a task. (Lit: Fall from horse)", tr:"Bir işte başarısız olmak. (Kelime: Attan düşmek)"},
-                {t:"Гар цайлгах", p:"Gar tsailgakh", en:"To give a tip/gift. (Lit: Make hands white)", tr:"Hediye/bahşiş vermek. (Kelime: Elleri beyazlatmak)"},
-                {t:"Салхи оруулах", p:"Salkhi oruulakh", en:"To get fresh air. (Lit: Let wind enter)", tr:"Hava almak. (Kelime: Rüzgar sokmak)"}
+                {t:"Чихэн дээр цэцэг ургах", p:"Chikhen deer tsetseg urgakh", en:"To be flattered.", tr:"Çok gururlanmak. (Kulaklarda çiçek açması)"},
+                {t:"Мориноос унах", p:"Morinoos unakh", en:"To fail at a task.", tr:"Başarısız olmak. (Attan düşmek)"},
+                {t:"Гар цайлгах", p:"Gar tsailgakh", en:"To give a tip/gift.", tr:"Hediye/bahşiş vermek. (Elleri beyazlatmak)"},
+                {t:"Салхи оруулах", p:"Salkhi oruulakh", en:"To get fresh air.", tr:"Hava almak. (Rüzgar sokmak)"}
             ],
             proverbs: [
                 {t:"Хоосон сав дуу ихтэй", p:"Khooson sav duu ikhtei", en:"Empty vessels make the most noise.", tr:"Boş teneke çok ses çıkarır."},
@@ -384,38 +367,40 @@
             ],
             specials: [
                 {t:"Айраг", p:"Airag", en:"Fermented mare's milk beverage.", tr:"Kımız (Fermente kısrak sütü)."},
-                {t:"Наадам", p:"Naadam", en:"Traditional summer festival (wrestling, racing, archery).", tr:"Geleneksel yaz festivali."},
-                {t:"Морин хуур", p:"Morin Khuur", en:"The 'Horsehead fiddle' instrument.", tr:"Geleneksel at kafalı yaylı çalgı."}
+                {t:"Наадам", p:"Naadam", en:"Traditional summer festival.", tr:"Geleneksel yaz festivali."},
+                {t:"Морин хуур", p:"Morin Khuur", en:"The 'Horsehead fiddle'.", tr:"Geleneksel at kafalı yaylı çalgı."}
             ]
         },
         tr: {
             words: [
-                {t:"Teşekkürler", p:"Teh-shek-kur-ler", en:"Thank you", tr:"Teşekkürler"},
-                {t:"Arkadaş", p:"Ar-ka-dash", en:"Friend", tr:"Arkadaş"},
-                {t:"Kahvaltı", p:"Kah-val-tuh", en:"Breakfast", tr:"Kahvaltı"},
-                {t:"Deniz", p:"Deh-niz", en:"Sea", tr:"Deniz"},
-                {t:"Bilgisayar", p:"Bil-gi-sa-yar", en:"Computer", tr:"Bilgisayar"},
-                {t:"Umut", p:"Oo-moot", en:"Hope", tr:"Umut"},
-                {t:"Zaman", p:"Za-man", en:"Time", tr:"Zaman"},
-                {t:"Gökyüzü", p:"Gok-yoo-zoo", en:"Sky", tr:"Gökyüzü"},
-                {t:"Aşk", p:"Ash-k", en:"Love", tr:"Aşk"},
-                {t:"Yolculuk", p:"Yol-ju-look", en:"Journey", tr:"Yolculuk"}
+                {t:"Teşekkürler", p:"Teh-shek-kur-ler", en:"Thank you", tr:"Teşekkürler"}, {t:"Arkadaş", p:"Ar-ka-dash", en:"Friend", tr:"Arkadaş"},
+                {t:"Kahvaltı", p:"Kah-val-tuh", en:"Breakfast", tr:"Kahvaltı"}, {t:"Deniz", p:"Deh-niz", en:"Sea", tr:"Deniz"},
+                {t:"Bilgisayar", p:"Bil-gi-sa-yar", en:"Computer", tr:"Bilgisayar"}, {t:"Umut", p:"Oo-moot", en:"Hope", tr:"Umut"},
+                {t:"Zaman", p:"Za-man", en:"Time", tr:"Zaman"}, {t:"Gökyüzü", p:"Gok-yoo-zoo", en:"Sky", tr:"Gökyüzü"},
+                {t:"Aşk", p:"Ash-k", en:"Love", tr:"Aşk"}, {t:"Yolculuk", p:"Yol-ju-look", en:"Journey", tr:"Yolculuk"},
+                {t:"Kitap", p:"Ki-tap", en:"Book", tr:"Kitap"}, {t:"Masa", p:"Ma-sa", en:"Table", tr:"Masa"}, {t:"Kapı", p:"Ka-pi", en:"Door", tr:"Kapı"},
+                {t:"Su", p:"Soo", en:"Water", tr:"Su"}, {t:"Ekmek", p:"Ek-mek", en:"Bread", tr:"Ekmek"}, {t:"Güneş", p:"Goo-nesh", en:"Sun", tr:"Güneş"},
+                {t:"Ay", p:"Ai", en:"Moon", tr:"Ay"}, {t:"Yıldız", p:"Yil-diz", en:"Star", tr:"Yıldız"}, {t:"Bulut", p:"Bu-loot", en:"Cloud", tr:"Bulut"},
+                {t:"Rüya", p:"Roo-ya", en:"Dream", tr:"Rüya"}, {t:"Gerçek", p:"Ger-chek", en:"Truth/Real", tr:"Gerçek"}, {t:"Yalan", p:"Ya-lan", en:"Lie", tr:"Yalan"},
+                {t:"Kedi", p:"Ke-di", en:"Cat", tr:"Kedi"}, {t:"Köpek", p:"Ko-pek", en:"Dog", tr:"Köpek"}, {t:"Ağaç", p:"A-ach", en:"Tree", tr:"Ağaç"},
+                {t:"Çiçek", p:"Chi-chek", en:"Flower", tr:"Çiçek"}, {t:"Ev", p:"Ev", en:"House", tr:"Ev"}, {t:"Şehir", p:"She-hir", en:"City", tr:"Şehir"},
+                {t:"Güzel", p:"Goo-zel", en:"Beautiful", tr:"Güzel"}, {t:"Zor", p:"Zor", en:"Difficult", tr:"Zor"}, {t:"Kolay", p:"Ko-lay", en:"Easy", tr:"Kolay"}
             ],
             idioms: [
-                {t:"Göze girmek", p:"Go-ze gir-mek", en:"To gain favor. (Lit: Enter the eye)", tr:"Göze girmek"},
-                {t:"Etekleri zil çalmak", p:"E-tek-le-ri zil chal-mak", en:"To be extremely excited. (Lit: Skirt bells ringing)", tr:"Etekleri zil çalmak"},
-                {t:"Pireyi deve yapmak", p:"Pi-re-yi de-ve yap-mak", en:"To exaggerate. (Lit: Make a camel out of a flea)", tr:"Pireyi deve yapmak"},
-                {t:"Çam devirmek", p:"Cham de-vir-mek", en:"To make a blunder. (Lit: Knock down a pine tree)", tr:"Çam devirmek"}
+                {t:"Göze girmek", p:"Go-ze gir-mek", en:"To gain favor.", tr:"Göze girmek."},
+                {t:"Etekleri zil çalmak", p:"E-tek-le-ri zil chal-mak", en:"To be extremely excited.", tr:"Çok heyecanlanmak, sevinmek."},
+                {t:"Pireyi deve yapmak", p:"Pi-re-yi de-ve yap-mak", en:"To exaggerate.", tr:"Bir şeyi çok abartmak."},
+                {t:"Çam devirmek", p:"Cham de-vir-mek", en:"To make a blunder.", tr:"Pot kırmak, istenmeyen laf etmek."}
             ],
             proverbs: [
-                {t:"Damlaya damlaya göl olur", p:"Dam-la-ya dam-la-ya gol o-lur", en:"Little things add up. (Lit: Drop by drop becomes lake)", tr:"Damlaya damlaya göl olur"},
-                {t:"Acele işe şeytan karışır", p:"A-je-le i-she shey-tan ka-ri-shir", en:"Haste makes waste. (Lit: Devil mixes with hurried work)", tr:"Acele işe şeytan karışır"},
-                {t:"Gülü seven dikenine katlanır", p:"Goo-loo se-ven di-ke-ni-ne kat-la-nir", en:"Accept the bad with the good. (Lit: Rose lover bears thorns)", tr:"Gülü seven dikenine katlanır"}
+                {t:"Damlaya damlaya göl olur", p:"Dam-la-ya dam-la-ya gol o-lur", en:"Little things add up.", tr:"Küçük birikimler büyür."},
+                {t:"Acele işe şeytan karışır", p:"A-je-le i-she shey-tan ka-ri-shir", en:"Haste makes waste.", tr:"Hızlı ve dikkatsiz yapılan iş bozuk olur."},
+                {t:"Gülü seven dikenine katlanır", p:"Goo-loo se-ven di-ke-ni-ne kat-la-nir", en:"Accept the bad with the good.", tr:"İyi bir şey için zorluklara katlanmak gerekir."}
             ],
             specials: [
-                {t:"Yakamoz", p:"Ya-ka-moz", en:"Phosphorescence of the moon on water.", tr:"Yakamoz"},
-                {t:"Hüzün", p:"Hoo-zoon", en:"Melancholic nostalgia.", tr:"Hüzün"},
-                {t:"Kolay gelsin", p:"Ko-lay gel-sin", en:"May it come easy (encouragement).", tr:"Kolay gelsin"}
+                {t:"Yakamoz", p:"Ya-ka-moz", en:"Phosphorescence of the moon on water.", tr:"Ayın veya ışığın su yüzeyindeki parıltısı."},
+                {t:"Hüzün", p:"Hoo-zoon", en:"Melancholic nostalgia.", tr:"Derin, manevi bir üzüntü veya melankoli."},
+                {t:"Kolay gelsin", p:"Ko-lay gel-sin", en:"May it come easy (encouragement).", tr:"Çalışan birine söylenen iyi dilek sözü."}
             ]
         }
     };
@@ -428,16 +413,15 @@
         interface: 'en', // 'en', 'tr'
         theme: 'light',
         date: new Date(),
-        calDate: new Date()
+        calDate: new Date(),
+        lastQuizWord: null // Memory variable to prevent repetition
     };
 
     function initSettings() {
-        // Load settings
         state.target = localStorage.getItem('poly_target');
         state.interface = localStorage.getItem('poly_interface') || 'en';
         state.theme = localStorage.getItem('poly_theme') || 'light';
 
-        // Apply theme
         const themeToggle = document.getElementById('theme-toggle');
         if (state.theme === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
@@ -449,12 +433,10 @@
             localStorage.setItem('poly_theme', state.theme);
         });
 
-        // Build Setup Screen
         buildTargetGrid();
         updateInterfaceButtons();
         translateSetup();
 
-        // Router
         if (state.target && CONFIG[state.target]) {
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('app-screen').style.display = 'flex';
@@ -472,7 +454,7 @@
             btn.innerHTML = `<span style="font-size:1.5rem">${lang.symbol}</span> ${lang.name[state.interface]}`;
             btn.onclick = () => {
                 state.target = key;
-                buildTargetGrid(); // refresh selections
+                buildTargetGrid(); 
             };
             grid.appendChild(btn);
         }
@@ -482,7 +464,7 @@
         state.interface = lang;
         updateInterfaceButtons();
         translateSetup();
-        buildTargetGrid(); // Update names in target grid
+        buildTargetGrid(); 
     }
 
     function updateInterfaceButtons() {
@@ -539,7 +521,7 @@
         const dict = UI_I18N[state.interface];
         document.getElementById('ui-nav-settings').textContent = dict.navSettings;
         document.getElementById('ui-header-sub').textContent = dict.headerSub;
-        document.getElementById('ui-header-streak').textContent = dict.streak;
+        document.getElementById('ui-header-streak').textContent = dict.headerStreak;
         document.getElementById('ui-lbl-special').textContent = dict.lblSpecial;
         document.getElementById('ui-lbl-word').textContent = dict.lblWord;
         document.getElementById('ui-lbl-idiom').textContent = dict.lblIdiom;
@@ -548,10 +530,9 @@
         document.getElementById('ui-quiz-q').textContent = dict.quizQ;
         document.getElementById('next-btn').textContent = dict.nextBtn;
         
-        // Calendar translations
         document.getElementById('ui-cal-title').textContent = dict.calTitle;
-        document.getElementById('ui-cal-practiced').textContent = dict.practiced;
-        document.getElementById('ui-cal-close').textContent = dict.close;
+        document.getElementById('ui-cal-practiced').textContent = dict.calPracticed;
+        document.getElementById('ui-cal-close').textContent = dict.calClose;
     }
 
     function getDayOfYear(d) {
@@ -560,7 +541,6 @@
     }
 
     function renderContent() {
-        // Date Display
         const dict = UI_I18N[state.interface];
         const today = new Date();
         if(state.date.toDateString() === today.toDateString()) {
@@ -574,7 +554,6 @@
         const y = state.date.getFullYear();
         const m = state.date.getMonth();
 
-        // Infinite Rotation Logic
         const word = db.words[(doy + y) % db.words.length];
         const idiom = db.idioms[(doy + 15) % db.idioms.length];
         const proverb = db.proverbs[(doy + 30) % db.proverbs.length];
@@ -593,7 +572,7 @@
     }
 
     /* =========================================================================
-       5. PROGRESS & STATS (Language Isolated)
+       5. PROGRESS & STATS
     ========================================================================= */
     function getKeys() {
         return {
@@ -670,7 +649,7 @@
     }
 
     /* =========================================================================
-       6. QUIZ LOGIC
+       6. QUIZ LOGIC (Fixed for true randomness & memory)
     ========================================================================= */
     function setupQuiz() {
         const container = document.getElementById('quiz-options');
@@ -683,7 +662,14 @@
         nextBtn.style.display = 'none';
 
         const db = DB[state.target].words;
-        const correctWord = db[Math.floor(Math.random() * db.length)];
+        let correctWord;
+        
+        // Anti-repetition logic: Keep rolling if we pick the exact same word as last time
+        do {
+            correctWord = db[Math.floor(Math.random() * db.length)];
+        } while (db.length > 1 && correctWord.t === state.lastQuizWord);
+        
+        state.lastQuizWord = correctWord.t; // Remember for next time
         
         document.getElementById('quiz-question').textContent = correctWord.t;
         document.getElementById('quiz-pronunciation').textContent = `/${correctWord.p}/`;
@@ -695,7 +681,12 @@
             if(!options.includes(candidate)) options.push(candidate);
             safety++;
         }
-        options.sort(() => Math.random() - 0.5);
+        
+        // Mathematically superior Fisher-Yates shuffle
+        for (let i = options.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [options[i], options[j]] = [options[j], options[i]];
+        }
 
         options.forEach(opt => {
             const btn = document.createElement('button');
