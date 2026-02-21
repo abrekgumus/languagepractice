@@ -37,6 +37,7 @@
             flex-direction: column;
             min-height: 100vh;
             transition: background-color 0.3s, color 0.3s;
+            background-repeat: repeat;
         }
 
         /* --- SETUP / WELCOME SCREEN --- */
@@ -53,9 +54,9 @@
         
         .lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .choice-btn {
-            background: var(--bg); border: 2px solid rgba(0,0,0,0.1); padding: 1rem; border-radius: 12px;
+            background: var(--bg); border: 2px solid rgba(0,0,0,0.1); padding: 1.5rem 1rem; border-radius: 12px;
             font-size: 1.1rem; font-weight: bold; color: var(--text-main); cursor: pointer; transition: 0.2s;
-            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
         }
         .choice-btn:hover { border-color: #3b82f6; transform: translateY(-2px); }
         .choice-btn.selected { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #3b82f6; }
@@ -84,7 +85,9 @@
         input:checked + .slider { background-color: var(--accent); }
         input:checked + .slider:before { transform: translateX(24px); }
 
-        .symbol-wrapper { font-size: 4rem; margin: 0 auto 0.5rem; text-shadow: 0 4px 10px rgba(0,0,0,0.3); line-height: 1; }
+        .symbol-wrapper { height: 90px; margin: 0 auto 1rem; display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); color: var(--accent); }
+        .symbol-wrapper svg { height: 100%; width: auto; }
+
         header h1 { margin: 0; font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; }
         header p { font-size: 1.1rem; opacity: 0.9; margin-top: 0.5rem; font-style: italic; }
 
@@ -160,7 +163,7 @@
 
 <div id="setup-screen">
     <div class="setup-box">
-        <h1 id="ui-setup-title">Polyglot Archive</h1>
+        <h1 id="ui-setup-title">Language Practice</h1>
         
         <div class="setup-section">
             <label id="ui-setup-target">I want to learn:</label>
@@ -189,8 +192,9 @@
             </label>
         </div>
 
-        <div class="symbol-wrapper" id="header-symbol">🌍</div>
-        <h1 id="header-title">Archive</h1>
+        <div class="symbol-wrapper" id="header-symbol"></div>
+        
+        <h1 id="header-title">Language Practice</h1>
         <p id="ui-header-sub">Daily Words, Idioms & Proverbs</p>
 
         <div class="controls-bar">
@@ -210,21 +214,18 @@
             <div class="pronunciation" id="special-p">...</div>
             <div class="meaning" id="special-m">...</div>
         </div>
-
         <div class="card card-word">
             <div class="label" id="ui-lbl-word">Word of the Day</div>
             <h2 class="target-text" id="word-t">...</h2>
             <div class="pronunciation" id="word-p">...</div>
             <div class="meaning" id="word-m">...</div>
         </div>
-
         <div class="card card-idiom">
             <div class="label" id="ui-lbl-idiom">Idiom of the Day</div>
             <h2 class="target-text" id="idiom-t">...</h2>
             <div class="pronunciation" id="idiom-p">...</div>
             <div class="meaning" id="idiom-m">...</div>
         </div>
-
         <div class="card card-proverb">
             <div class="label" id="ui-lbl-proverb">Proverb of the Day</div>
             <h2 class="target-text" id="proverb-t">...</h2>
@@ -237,18 +238,14 @@
                 <div class="score-correct">✔ <span id="score-correct">0</span></div>
                 <div class="score-wrong">✖ <span id="score-wrong">0</span></div>
             </div>
-            
             <div class="label" style="justify-content: center;" id="ui-lbl-challenge">Knowledge Check</div>
             <div class="quiz-question" id="ui-quiz-q">What does this word mean?</div>
-            
             <div class="quiz-word-box">
                 <div class="quiz-word" id="quiz-question"></div>
                 <div class="quiz-pron" id="quiz-pronunciation"></div>
             </div>
-            
             <div class="quiz-grid" id="quiz-options"></div>
             <div id="quiz-feedback" style="margin-top:1.5rem; font-weight:800; min-height:1.5em; color:var(--text-main);"></div>
-            
             <button class="next-btn" id="next-btn" onclick="setupQuiz()"></button>
         </div>
     </div>
@@ -275,34 +272,44 @@
        1. CONFIGURATION
     ========================================================================= */
     const CONFIG = {
-        fr: { id: 'fr', name: { en: "French", tr: "Fransızca" }, colors: { primary: "#0055A4", dark: "#003d7a", accent: "#EF4135", danger: "#27ae60" }, symbol: "⚜️" },
-        mn: { id: 'mn', name: { en: "Mongolian", tr: "Moğolca" }, colors: { primary: "#0066B3", dark: "#004d88", accent: "#FFD900", danger: "#DA2032" }, symbol: "🛕" },
-        tr: { id: 'tr', name: { en: "Turkish", tr: "Türkçe" }, colors: { primary: "#c0392b", dark: "#922b21", accent: "#1abc9c", danger: "#2980b9" }, symbol: "🧿" }
+        fr: { 
+            id: 'fr', name: { en: "French", tr: "Fransızca" }, colors: { primary: "#0055A4", dark: "#003d7a", accent: "#FFD700", danger: "#EF4135" }, 
+            logoSVG: `<svg viewBox="0 0 100 100" fill="currentColor"><path d="M50 10 C35 30 35 45 45 55 L55 55 C65 45 65 30 50 10 Z"/><path d="M40 45 C15 45 10 60 20 75 C30 65 35 55 45 55 Z"/><path d="M60 45 C85 45 90 60 80 75 C70 65 65 55 55 55 Z"/><path d="M45 60 L55 60 L65 85 L35 85 Z"/><rect x="30" y="55" width="40" height="6" rx="2"/></svg>`,
+            bgPattern: `url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 10 C35 30 35 45 45 55 L55 55 C65 45 65 30 50 10 Z M40 45 C15 45 10 60 20 75 C30 65 35 55 45 55 Z M60 45 C85 45 90 60 80 75 C70 65 65 55 55 55 Z M45 60 L55 60 L65 85 L35 85 Z M30 55 h40 v6 h-40 z' fill='%23888' fill-opacity='0.05'/%3E%3C/svg%3E")`
+        },
+        mn: { 
+            id: 'mn', name: { en: "Mongolian", tr: "Moğolca" }, colors: { primary: "#0066B3", dark: "#004d88", accent: "#FFD900", danger: "#DA2032" }, 
+            logoSVG: `<svg viewBox="0 0 100 200" fill="currentColor"><path d="M50 10 L65 30 L35 30 Z"/><circle cx="50" cy="45" r="10"/><path d="M40 65 Q50 75 60 65 Q50 55 40 65"/><rect x="35" y="75" width="30" height="5"/><rect x="25" y="85" width="50" height="5"/><circle cx="50" cy="110" r="15" fill="none" stroke="currentColor" stroke-width="4"/><path d="M50 95 A 15 15 0 0 1 50 125 A 7.5 7.5 0 0 0 50 110 A 7.5 7.5 0 0 1 50 95"/><rect x="25" y="135" width="50" height="5"/><rect x="35" y="145" width="30" height="5"/><rect x="15" y="75" width="5" height="75"/><rect x="80" y="75" width="5" height="75"/></svg>`,
+            bgPattern: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0l20 20-20 20L0 20z' fill='%23888' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E")`
+        },
+        tr: { 
+            id: 'tr', name: { en: "Turkish", tr: "Türkçe" }, colors: { primary: "#c0392b", dark: "#922b21", accent: "#1abc9c", danger: "#2980b9" }, 
+            logoSVG: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#1e3a8a" stroke="rgba(255,255,255,0.4)" stroke-width="4"/><circle cx="50" cy="50" r="30" fill="#f8fafc"/><circle cx="50" cy="50" r="18" fill="#60a5fa"/><circle cx="50" cy="50" r="8" fill="#0f172a"/></svg>`,
+            bgPattern: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23888' stroke-width='1.5' stroke-opacity='0.08'%3E%3Cpath d='M30 0 L60 30 L30 60 L0 30 Z'/%3E%3Cpath d='M15 15 L45 45 M15 45 L45 15'/%3E%3C/g%3E%3C/svg%3E")`
+        }
     };
 
     const UI_I18N = {
         en: {
-            setupTitle: "Welcome to Polyglot Archive", setupTarget: "I want to learn:", setupInt: "Interface Language:", setupStart: "Start Learning",
+            setupTitle: "Language Practice", setupTarget: "I want to learn:", setupInt: "Interface Language:", setupStart: "Start Learning",
             navSettings: "⚙ Settings", headerSub: "Daily Words, Idioms & Proverbs", headerStreak: "Day Streak",
             lblSpecial: "Cultural Feature", lblWord: "Word of the Day", lblIdiom: "Idiom of the Day", lblProverb: "Proverb of the Day", lblChallenge: "Knowledge Check",
-            quizQ: "What does this mean?", nextBtn: "Next Question ➔",
-            correct: "Correct! 🎉", wrong: "Incorrect. The answer is:",
+            quizQ: "What does this mean?", nextBtn: "Next Question ➔", correct: "Correct! 🎉", wrong: "Incorrect. The answer is:",
             today: "Today", calTitle: "Activity Calendar", calPracticed: "Practiced", calClose: "Close",
             days: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'], months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
         },
         tr: {
-            setupTitle: "Poliglot Hazinesine Hoş Geldiniz", setupTarget: "Öğrenmek İstediğim Dil:", setupInt: "Arayüz Dili:", setupStart: "Öğrenmeye Başla",
+            setupTitle: "Dil Pratiği", setupTarget: "Öğrenmek İstediğim Dil:", setupInt: "Arayüz Dili:", setupStart: "Öğrenmeye Başla",
             navSettings: "⚙ Ayarlar", headerSub: "Günlük Kelimeler, Deyimler ve Atasözleri", headerStreak: "Gün Serisi",
             lblSpecial: "Ayın Kültürel Kelimesi", lblWord: "Günün Kelimesi", lblIdiom: "Günün Deyimi", lblProverb: "Günün Atasözü", lblChallenge: "Kendini Dene",
-            quizQ: "Bunun anlamı nedir?", nextBtn: "Sıradaki Soru ➔",
-            correct: "Doğru! 🎉", wrong: "Yanlış. Doğru cevap:",
+            quizQ: "Bunun anlamı nedir?", nextBtn: "Sıradaki Soru ➔", correct: "Doğru! 🎉", wrong: "Yanlış. Doğru cevap:",
             today: "Bugün", calTitle: "Aktivite Takvimi", calPracticed: "Çalışıldı", calClose: "Kapat",
             days: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'], months: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
         }
     };
 
     /* =========================================================================
-       2. DATABASE (With Literal Translations / Birebir Çeviriler)
+       2. DATABASE (100 Words, 25 Idioms, 25 Proverbs for EACH language)
     ========================================================================= */
     const DB = {
         fr: {
@@ -318,25 +325,96 @@
                 {t:"Sourire", p:"Su-rir", en:"Smile", tr:"Gülümseme"}, {t:"Manger", p:"Man-je", en:"To eat", tr:"Yemek yemek"}, {t:"Boire", p:"Buar", en:"To drink", tr:"İçmek"},
                 {t:"Dormir", p:"Dor-mir", en:"To sleep", tr:"Uyumak"}, {t:"Parler", p:"Par-le", en:"To speak", tr:"Konuşmak"}, {t:"Trouver", p:"Tru-ve", en:"To find", tr:"Bulmak"},
                 {t:"Nouveau", p:"Nu-vo", en:"New", tr:"Yeni"}, {t:"Vieux", p:"Viyö", en:"Old", tr:"Eski"}, {t:"Beau", p:"Bo", en:"Beautiful", tr:"Güzel"},
-                {t:"Rapide", p:"Ra-pid", en:"Fast", tr:"Hızlı"}, {t:"Facile", p:"Fa-sil", en:"Easy", tr:"Kolay"}, {t:"Difficile", p:"Di-fi-sil", en:"Difficult", tr:"Zor"}
+                {t:"Rapide", p:"Ra-pid", en:"Fast", tr:"Hızlı"}, {t:"Facile", p:"Fa-sil", en:"Easy", tr:"Kolay"}, {t:"Difficile", p:"Di-fi-sil", en:"Difficult", tr:"Zor"},
+                {t:"Bonjour", p:"Bon-jur", en:"Hello", tr:"Merhaba"}, {t:"Merci", p:"Mer-si", en:"Thank you", tr:"Teşekkürler"}, {t:"Oui", p:"Vi", en:"Yes", tr:"Evet"},
+                {t:"Non", p:"Non", en:"No", tr:"Hayır"}, {t:"Homme", p:"Om", en:"Man", tr:"Adam"}, {t:"Femme", p:"Fam", en:"Woman", tr:"Kadın"},
+                {t:"Enfant", p:"An-fan", en:"Child", tr:"Çocuk"}, {t:"École", p:"E-kol", en:"School", tr:"Okul"}, {t:"Fenêtre", p:"Fö-net-r", en:"Window", tr:"Pencere"},
+                {t:"Porte", p:"Port", en:"Door", tr:"Kapı"}, {t:"Train", p:"Tran", en:"Train", tr:"Tren"}, {t:"Avion", p:"A-vi-yon", en:"Airplane", tr:"Uçak"},
+                {t:"Rouge", p:"Ruj", en:"Red", tr:"Kırmızı"}, {t:"Bleu", p:"Blö", en:"Blue", tr:"Mavi"}, {t:"Vert", p:"Ver", en:"Green", tr:"Yeşil"},
+                {t:"Jaune", p:"Jon", en:"Yellow", tr:"Sarı"}, {t:"Blanc", p:"Blan", en:"White", tr:"Beyaz"}, {t:"Noir", p:"Nuar", en:"Black", tr:"Siyah"},
+                {t:"Grand", p:"Gran", en:"Big", tr:"Büyük"}, {t:"Petit", p:"Pö-ti", en:"Small", tr:"Küçük"}, {t:"Chaud", p:"Şo", en:"Hot", tr:"Sıcak"},
+                {t:"Froid", p:"Frua", en:"Cold", tr:"Soğuk"}, {t:"Bien", p:"Biyen", en:"Well/Good", tr:"İyi"}, {t:"Mal", p:"Mal", en:"Badly/Poorly", tr:"Kötü"},
+                {t:"Toujours", p:"Tu-jur", en:"Always", tr:"Her zaman"}, {t:"Jamais", p:"Ja-me", en:"Never", tr:"Asla"}, {t:"Aujourd'hui", p:"O-jur-düi", en:"Today", tr:"Bugün"},
+                {t:"Demain", p:"Dö-men", en:"Tomorrow", tr:"Yarın"}, {t:"Hier", p:"İ-yer", en:"Yesterday", tr:"Dün"}, {t:"Heure", p:"Ör", en:"Hour", tr:"Saat"},
+                {t:"Semaine", p:"Sö-men", en:"Week", tr:"Hafta"}, {t:"Mois", p:"Mua", en:"Month", tr:"Ay"}, {t:"Année", p:"A-ne", en:"Year", tr:"Yıl"},
+                {t:"Lundi", p:"Lön-di", en:"Monday", tr:"Pazartesi"}, {t:"Mardi", p:"Mar-di", en:"Tuesday", tr:"Salı"}, {t:"Mercredi", p:"Merk-rö-di", en:"Wednesday", tr:"Çarşamba"},
+                {t:"Jeudi", p:"Jö-di", en:"Thursday", tr:"Perşembe"}, {t:"Vendredi", p:"Van-drö-di", en:"Friday", tr:"Cuma"}, {t:"Samedi", p:"Sam-di", en:"Saturday", tr:"Cumartesi"},
+                {t:"Dimanche", p:"Di-manş", en:"Sunday", tr:"Pazar"}, {t:"Un", p:"An", en:"One", tr:"Bir"}, {t:"Deux", p:"Dö", en:"Two", tr:"İki"},
+                {t:"Trois", p:"Trua", en:"Three", tr:"Üç"}, {t:"Quatre", p:"Kat-r", en:"Four", tr:"Dört"}, {t:"Cinq", p:"Senk", en:"Five", tr:"Beş"},
+                {t:"Six", p:"Sis", en:"Six", tr:"Altı"}, {t:"Sept", p:"Set", en:"Seven", tr:"Yedi"}, {t:"Huit", p:"Üit", en:"Eight", tr:"Sekiz"},
+                {t:"Neuf", p:"Nöf", en:"Nine", tr:"Dokuz"}, {t:"Dix", p:"Dis", en:"Ten", tr:"On"}, {t:"Mère", p:"Mer", en:"Mother", tr:"Anne"},
+                {t:"Père", p:"Per", en:"Father", tr:"Baba"}, {t:"Frère", p:"Frer", en:"Brother", tr:"Erkek kardeş"}, {t:"Sœur", p:"Sör", en:"Sister", tr:"Kız kardeş"},
+                {t:"Oncle", p:"Onkl", en:"Uncle", tr:"Amca/Dayı"}, {t:"Tante", p:"Tant", en:"Aunt", tr:"Hala/Teyze"}, {t:"Main", p:"Men", en:"Hand", tr:"El"},
+                {t:"Tête", p:"Tet", en:"Head", tr:"Baş"}, {t:"Œil", p:"Öy", en:"Eye", tr:"Göz"}, {t:"Bouche", p:"Buş", en:"Mouth", tr:"Ağız"},
+                {t:"Jambe", p:"Jamb", en:"Leg", tr:"Bacak"}, {t:"Pied", p:"Pi-ye", en:"Foot", tr:"Ayak"}
             ],
             idioms: [
-                {t:"Poser un lapin", p:"Po-ze an la-pen", en:"To stand someone up. (Lit: To put a rabbit)", tr:"Birini ekmek (randevuya gitmemek). (Kelime: Tavşan koymak)"},
-                {t:"Avoir le cafard", p:"A-vuar lö ka-far", en:"To feel depressed. (Lit: To have the cockroach)", tr:"Depresif hissetmek. (Kelime: Hamamböceğine sahip olmak)"},
-                {t:"Tomber dans les pommes", p:"Tom-be dan le pom", en:"To faint. (Lit: To fall in the apples)", tr:"Bayılmak. (Kelime: Elmalara düşmek)"},
-                {t:"Avoir la pêche", p:"A-vuar la peş", en:"To be full of energy. (Lit: To have the peach)", tr:"Enerjik olmak. (Kelime: Şeftaliye sahip olmak)"},
-                {t:"Faire la grasse matinée", p:"Fer la gras ma-ti-ne", en:"To sleep in. (Lit: To make the fat morning)", tr:"Öğlene kadar uyumak. (Kelime: Yağlı sabah yapmak)"}
+                {t:"Poser un lapin", p:"Po-ze an la-pen", en:"To stand someone up. (Lit: Put a rabbit)", tr:"Birini ekmek. (Kelime: Tavşan koymak)"},
+                {t:"Avoir le cafard", p:"A-vuar lö ka-far", en:"To feel depressed. (Lit: Have the cockroach)", tr:"Depresif hissetmek. (Kelime: Hamamböceğine sahip olmak)"},
+                {t:"Tomber dans les pommes", p:"Tom-be dan le pom", en:"To faint. (Lit: Fall in the apples)", tr:"Bayılmak. (Kelime: Elmalara düşmek)"},
+                {t:"Avoir la pêche", p:"A-vuar la peş", en:"To be full of energy. (Lit: Have the peach)", tr:"Enerjik olmak. (Kelime: Şeftaliye sahip olmak)"},
+                {t:"Faire la grasse matinée", p:"Fer la gras ma-ti-ne", en:"To sleep in. (Lit: Make the fat morning)", tr:"Öğlene kadar uyumak. (Kelime: Yağlı sabah yapmak)"},
+                {t:"Casser les pieds", p:"Ka-se le pi-ye", en:"To annoy someone. (Lit: Break the feet)", tr:"Birini rahatsız etmek. (Kelime: Ayakları kırmak)"},
+                {t:"Donner sa langue au chat", p:"Do-ne sa lang o şa", en:"To give up guessing. (Lit: Give tongue to the cat)", tr:"Pes etmek. (Kelime: Dilini kediye vermek)"},
+                {t:"Avoir un chat dans la gorge", p:"A-vuar an şa dan la gorj", en:"To have a frog in one's throat. (Lit: Cat in the throat)", tr:"Boğazı gıcıklanmak. (Kelime: Boğazında kedi olmak)"},
+                {t:"Être dans la lune", p:"Et-r dan la lün", en:"To be daydreaming. (Lit: To be in the moon)", tr:"Dalgın olmak. (Kelime: Ayda olmak)"},
+                {t:"Avoir la main verte", p:"A-vuar la men vert", en:"To have a green thumb. (Lit: Have green hand)", tr:"Bitki yetiştirmekte usta olmak. (Kelime: Yeşil ele sahip olmak)"},
+                {t:"Mettre son grain de sel", p:"Met-r son gran dö sel", en:"To put one's two cents in. (Lit: Put grain of salt)", tr:"Her şeye karışmak. (Kelime: Tuz tanesini koymak)"},
+                {t:"C'est la fin des haricots", p:"Se la fen de a-ri-ko", en:"It's the end of the line. (Lit: End of the beans)", tr:"Her şey bitti, umut yok. (Kelime: Fasulyelerin sonu)"},
+                {t:"Appeler un chat un chat", p:"A-pö-le an şa an şa", en:"To call a spade a spade. (Lit: Call a cat a cat)", tr:"Dobra olmak. (Kelime: Kediye kedi demek)"},
+                {t:"Boire comme un trou", p:"Buar kom an tru", en:"To drink like a fish. (Lit: Drink like a hole)", tr:"Çok içki içmek. (Kelime: Delik gibi içmek)"},
+                {t:"En faire tout un fromage", p:"An fer tut an fro-maj", en:"To make a big deal of it. (Lit: Make a whole cheese of it)", tr:"Abartmak. (Kelime: Ondan koca bir peynir yapmak)"},
+                {t:"Pleuvoir des cordes", p:"Plö-vuar de kord", en:"It's raining cats and dogs. (Lit: Raining ropes)", tr:"Bardaktan boşanırcasına yağmak. (Kelime: İp yağmak)"},
+                {t:"Avoir le coup de foudre", p:"A-vuar lö ku dö fud-r", en:"Love at first sight. (Lit: Have the strike of lightning)", tr:"İlk görüşte aşk. (Kelime: Yıldırım çarpmasına uğramak)"},
+                {t:"Être une poule mouillée", p:"Et-r ün pul mu-ye", en:"To be a coward. (Lit: Be a wet hen)", tr:"Korkak olmak. (Kelime: Islak tavuk olmak)"},
+                {t:"Avoir le melon", p:"A-vuar lö mö-lon", en:"To be cocky/big-headed. (Lit: Have the melon)", tr:"Kibirli olmak. (Kelime: Kavuna sahip olmak)"},
+                {t:"Couper les cheveux en quatre", p:"Ku-pe le şö-vö an kat-r", en:"To split hairs. (Lit: Cut hair in four)", tr:"İnce eleyip sık dokumak. (Kelime: Saçı dörde bölmek)"},
+                {t:"Se creuser la tête", p:"Sö krö-ze la tet", en:"To rack one's brain. (Lit: Dig one's head)", tr:"Kafa patlatmak. (Kelime: Kafasını kazmak)"},
+                {t:"Faire un froid de canard", p:"Fer an frua dö ka-nar", en:"To be freezing cold. (Lit: Do a duck's cold)", tr:"Çok soğuk olmak. (Kelime: Ördek soğuğu yapmak)"},
+                {t:"Quand les poules auront des dents", p:"Kan le pul o-ron de dan", en:"When pigs fly. (Lit: When hens have teeth)", tr:"Çıkmaz ayın son çarşambası. (Kelime: Tavuklar dişlendiğinde)"},
+                {t:"Manger sur le pouce", p:"Man-je sür lö pus", en:"To eat on the go. (Lit: Eat on the thumb)", tr:"Ayaküstü yemek. (Kelime: Başparmak üstünde yemek)"},
+                {t:"Tenir la chandelle", p:"Tö-nir la şan-del", en:"To be a third wheel. (Lit: Hold the candle)", tr:"Üçüncü kişi fazlalık olmak. (Kelime: Mumu tutmak)"}
             ],
             proverbs: [
                 {t:"Qui vivra verra", p:"Ki viv-ra ve-ra", en:"Time will tell. (Lit: Who lives will see)", tr:"Zaman gösterir. (Kelime: Yaşayan görecek)"},
+                {t:"Petit à petit, l'oiseau fait son nid", p:"Pö-ti a pö-ti...", en:"Little by little, the bird makes its nest.", tr:"Damlaya damlaya göl olur. (Kuş yuvasını azar azar yapar)"},
                 {t:"Mieux vaut tard que jamais", p:"Miyö vo tar kö ja-me", en:"Better late than never.", tr:"Geç olsun güç olmasın."},
-                {t:"L'habit ne fait pas le moine", p:"La-bi nö fe pa lö muan", en:"Don't judge a book by its cover. (Lit: The habit doesn't make the monk)", tr:"Görünüşe aldanma. (Kelime: Kıyafet keşiş yapmaz)"},
-                {t:"Vouloir, c'est pouvoir", p:"Vu-luar, se pu-vuar", en:"Where there is a will, there is a way. (Lit: To want is to be able to)", tr:"İsteyen başarır. (Kelime: İstemek yapabilmektir)"}
+                {t:"Vouloir, c'est pouvoir", p:"Vu-luar, se pu-vuar", en:"Where there is a will, there is a way. (Lit: To want is to be able to)", tr:"İsteyen başarır. (İstemek yapabilmektir)"},
+                {t:"L'appétit vient en mangeant", p:"La-pe-ti viyen an man-jan", en:"Appetite comes with eating.", tr:"İştah yedikçe açılır."},
+                {t:"Les murs ont des oreilles", p:"Le mür on de zo-rey", en:"Walls have ears.", tr:"Yerin kulağı vardır. (Duvarların kulağı var)"},
+                {t:"Après la pluie, le beau temps", p:"Ap-re la plüi, lö bo tan", en:"Every cloud has a silver lining. (Lit: After rain, nice weather)", tr:"Her zorluktan sonra kolaylık gelir. (Yağmurdan sonra güzel hava)"},
+                {t:"Chacun voit midi à sa porte", p:"Şa-kan vua mi-di a sa port", en:"Everyone sees things from their own perspective. (Lit: Sees noon at their door)", tr:"Herkes olayları işine geldiği gibi yorumlar."},
+                {t:"Loin des yeux, loin du cœur", p:"Luan de yö, luan dü kör", en:"Out of sight, out of mind. (Lit: Far from eyes, far from heart)", tr:"Gözden ırak olan gönülden ırak olur."},
+                {t:"Qui vole un œuf vole un bœuf", p:"Ki vol an öf vol an böf", en:"He who steals an egg will steal an ox.", tr:"Küçük hırsızlıklar büyüklere yol açar. (Yumurta çalan öküz de çalar)"},
+                {t:"Tout est bien qui finit bien", p:"Tu te biyen ki fi-ni biyen", en:"All's well that ends well.", tr:"Sonu iyi biten her şey iyidir."},
+                {t:"La nuit porte conseil", p:"La nüi port kon-sey", en:"Sleep on it. (Lit: The night brings advice)", tr:"Sabah ola hayrola. (Gece tavsiye getirir)"},
+                {t:"C'est la vie", p:"Se la vi", en:"That's life.", tr:"Hayat bu, böyle şeyler olur."},
+                {t:"Impossible n'est pas français", p:"Em-po-sib-l ne pa fran-se", en:"Nothing is impossible. (Lit: Impossible is not French)", tr:"İmkansız diye bir şey yoktur. (İmkansız Fransızca değildir)"},
+                {t:"Qui se ressemble s'assemble", p:"Ki sö rö-sam-bl sa-sam-bl", en:"Birds of a feather flock together.", tr:"Tencere yuvarlanmış kapağını bulmuş."},
+                {t:"Il n'y a pas de fumée sans feu", p:"İl niyam pa dö fü-me san fö", en:"There is no smoke without fire.", tr:"Ateş olmayan yerden duman çıkmaz."},
+                {t:"Rira bien qui rira le dernier", p:"Ri-ra biyen ki ri-ra lö der-niye", en:"He laughs best who laughs last.", tr:"Son gülen iyi güler."},
+                {t:"Les bons comptes font les bons amis", p:"Le bon kont fon le bon a-mi", en:"Short reckonings make long friends.", tr:"Alışverişte dürüstlük dostluğu pekiştirir. (İyi hesap iyi dost yapar)"},
+                {t:"On ne fait pas d'omelette sans casser des œufs", p:"On nö fe pa dom-let...", en:"You can't make an omelet without breaking eggs.", tr:"Zahmetsiz rahmet olmaz. (Yumurta kırmadan omlet yapılmaz)"},
+                {t:"Qui sème le vent récolte la tempête", p:"Ki sem lö van...", en:"He who sows the wind reaps the storm.", tr:"Rüzgar eken fırtına biçer."},
+                {t:"Pierre qui roule n'amasse pas de mousse", p:"Piyer ki rul...", en:"A rolling stone gathers no moss.", tr:"İşleyen demir ışıldar / Yuvarlanan taş yosun tutmaz."},
+                {t:"Mieux vaut être seul que mal accompagné", p:"Miyö vo et-r söl...", en:"Better to be alone than in bad company.", tr:"Kötü bir arkadaşın olacağına yalnız ol daha iyi."},
+                {t:"Chien qui aboie ne mord pas", p:"Şiyen ki a-bua nö mor pa", en:"Barking dogs seldom bite.", tr:"Havlayan köpek ısırmaz."},
+                {t:"La fin justifie les moyens", p:"La fen jüs-ti-fi le mua-yen", en:"The end justifies the means.", tr:"Amaca giden her yol mübahtır."},
+                {t:"L'argent ne fait pas le bonheur", p:"Lar-jan nö fe pa lö bo-nör", en:"Money doesn't buy happiness.", tr:"Para mutluluk getirmez."}
             ],
             specials: [
                 {t:"Déjà vu", p:"De-ja vü", en:"Feeling of having already experienced something.", tr:"Daha önce yaşanmışlık hissi."},
                 {t:"Flâneur", p:"Fla-nör", en:"A person wandering the city streets.", tr:"Şehirde aylak aylak dolaşan kişi."},
-                {t:"Savoir-vivre", p:"Sa-vuar viv-r", en:"Knowledge of polite society.", tr:"Görgü kuralları, yaşamayı bilmek."}
+                {t:"Savoir-vivre", p:"Sa-vuar viv-r", en:"Knowledge of polite society.", tr:"Görgü kuralları, yaşamayı bilmek."},
+                {t:"L'esprit de l'escalier", p:"Les-pri dö les-kal-iye", en:"Thinking of the perfect reply too late.", tr:"Tam ortamdan ayrılırken akla gelen cevap. (Merdiven aklı)"},
+                {t:"Joie de vivre", p:"Jua dö viv-r", en:"Joy of living.", tr:"Yaşama sevinci."},
+                {t:"Vis-à-vis", p:"Vi-za vi", en:"Face to face / In relation to.", tr:"Karşı karşıya / İlgili olarak."},
+                {t:"Terroir", p:"Ter-ruar", en:"The unique environment that gives wine/food its flavor.", tr:"Bir ürünün yetiştiği yörenin ona kattığı özel karakter."},
+                {t:"Faux pas", p:"Fo pa", en:"A social blunder. (Lit: False step)", tr:"Gaf, sosyal hata. (Kelime: Yanlış adım)"},
+                {t:"Je ne sais quoi", p:"Jö nö se kua", en:"An indescribable, appealing quality.", tr:"Tarif edilemeyen o özel şey. (Ne olduğunu bilmiyorum)"},
+                {t:"Coup d'état", p:"Ku de-ta", en:"A sudden overthrow of a government.", tr:"Hükümet darbesi."},
+                {t:"Carte blanche", p:"Kart blanş", en:"Complete freedom to act. (Lit: Blank card)", tr:"Tam yetki, açık çek. (Beyaz kart)"},
+                {t:"Chef-d'œuvre", p:"Şef döv-r", en:"A masterpiece.", tr:"Başyapıt."}
             ]
         },
         mn: {
@@ -352,23 +430,97 @@
                 {t:"Цаг", p:"Tsag", en:"Time", tr:"Zaman"}, {t:"Том", p:"Tom", en:"Big", tr:"Büyük"}, {t:"Жижиг", p:"Jijig", en:"Small", tr:"Küçük"},
                 {t:"Явах", p:"Yavakh", en:"To go", tr:"Gitmek"}, {t:"Ирэх", p:"Irekh", en:"To come", tr:"Gelmek"}, {t:"Идэх", p:"Idekh", en:"To eat", tr:"Yemek yemek"},
                 {t:"Унтах", p:"Untakh", en:"To sleep", tr:"Uyumak"}, {t:"Сургууль", p:"Surguuli", en:"School", tr:"Okul"}, {t:"Ном", p:"Nom", en:"Book", tr:"Kitap"},
-                {t:"Мөнгө", p:"Möngö", en:"Money", tr:"Para"}, {t:"Хайр", p:"Khair", en:"Love", tr:"Aşk"}
+                {t:"Мөнгө", p:"Möngö", en:"Money", tr:"Para"}, {t:"Хайр", p:"Khair", en:"Love", tr:"Aşk"}, {t:"Өнөөдөр", p:"Önöödör", en:"Today", tr:"Bugün"},
+                {t:"Маргааш", p:"Margaash", en:"Tomorrow", tr:"Yarın"}, {t:"Өчигдөр", p:"Öchigdör", en:"Yesterday", tr:"Dün"}, {t:"Улаан", p:"Ulaan", en:"Red", tr:"Kırmızı"},
+                {t:"Хөх", p:"Khökh", en:"Blue", tr:"Mavi"}, {t:"Ногоон", p:"Nogoon", en:"Green", tr:"Yeşil"}, {t:"Шар", p:"Shar", en:"Yellow", tr:"Sarı"},
+                {t:"Цагаан", p:"Tsagaan", en:"White", tr:"Beyaz"}, {t:"Хар", p:"Khar", en:"Black", tr:"Siyah"}, {t:"Халуун", p:"Khaluun", en:"Hot", tr:"Sıcak"},
+                {t:"Хүйтэн", p:"Khüiten", en:"Cold", tr:"Soğuk"}, {t:"Муу", p:"Muu", en:"Bad", tr:"Kötü"}, {t:"Үгүй", p:"Ügüi", en:"No", tr:"Hayır"},
+                {t:"Тийм", p:"Tiim", en:"Yes", tr:"Evet"}, {t:"Баярлалаа", p:"Bayarlalaa", en:"Thank you", tr:"Teşekkürler"}, {t:"Сайн байна уу", p:"Sain baina uu", en:"Hello", tr:"Merhaba"},
+                {t:"Баяртай", p:"Bayartai", en:"Goodbye", tr:"Hoşçakal"}, {t:"Ах", p:"Akh", en:"Older brother", tr:"Ağabey"}, {t:"Эгч", p:"Egch", en:"Older sister", tr:"Abla"},
+                {t:"Дүү", p:"Düü", en:"Younger sibling", tr:"Kardeş"}, {t:"Охин", p:"Okhin", en:"Daughter/Girl", tr:"Kız"}, {t:"Хүү", p:"Khüü", en:"Son/Boy", tr:"Oğul/Erkek çocuk"},
+                {t:"Эмэгтэй", p:"Emegtei", en:"Woman", tr:"Kadın"}, {t:"Эрэгтэй", p:"Eregtei", en:"Man", tr:"Erkek"}, {t:"Газар", p:"Gazar", en:"Land/Earth", tr:"Toprak/Yer"},
+                {t:"Од", p:"Od", en:"Star", tr:"Yıldız"}, {t:"Мод", p:"Mod", en:"Tree/Wood", tr:"Ağaç/Odun"}, {t:"Цэцэг", p:"Tsetseg", en:"Flower", tr:"Çiçek"},
+                {t:"Гол", p:"Gol", en:"River", tr:"Nehir"}, {t:"Нуур", p:"Nuur", en:"Lake", tr:"Göl"}, {t:"Далай", p:"Dalai", en:"Ocean/Sea", tr:"Okyanus/Deniz"},
+                {t:"Загас", p:"Zagas", en:"Fish", tr:"Balık"}, {t:"Шувуу", p:"Shuvuu", en:"Bird", tr:"Kuş"}, {t:"Үнээ", p:"Ünee", en:"Cow", tr:"İnek"},
+                {t:"Хонь", p:"Khoni", en:"Sheep", tr:"Koyun"}, {t:"Ямаа", p:"Yamaa", en:"Goat", tr:"Keçi"}, {t:"Гахай", p:"Gakhai", en:"Pig", tr:"Domuz"},
+                {t:"Тахиа", p:"Takhia", en:"Chicken", tr:"Tavuk"}, {t:"Нүд", p:"Nüd", en:"Eye", tr:"Göz"}, {t:"Гар", p:"Gar", en:"Hand/Arm", tr:"El/Kol"},
+                {t:"Хөл", p:"Khöl", en:"Foot/Leg", tr:"Ayak/Bacak"}, {t:"Толгой", p:"Tolgoi", en:"Head", tr:"Baş/Kafa"}, {t:"Үс", p:"Üs", en:"Hair", tr:"Saç"},
+                {t:"Чих", p:"Chikh", en:"Ear", tr:"Kulak"}, {t:"Ам", p:"Am", en:"Mouth", tr:"Ağız"}, {t:"Шүд", p:"Shüd", en:"Tooth", tr:"Diş"},
+                {t:"Хэл", p:"Khel", en:"Tongue/Language", tr:"Dil"}, {t:"Зүрх", p:"Zürkh", en:"Heart", tr:"Kalp"}, {t:"Цус", p:"Tsus", en:"Blood", tr:"Kan"},
+                {t:"Яс", p:"Yas", en:"Bone", tr:"Kemik"}, {t:"Арьс", p:"Aris", en:"Skin", tr:"Deri"}, {t:"Өвс", p:"Övs", en:"Grass", tr:"Ot/Çimen"},
+                {t:"Навч", p:"Navch", en:"Leaf", tr:"Yaprak"}, {t:"Чулуу", p:"Chuluu", en:"Stone", tr:"Taş"}, {t:"Элс", p:"Els", en:"Sand", tr:"Kum"},
+                {t:"Шороо", p:"Shoroo", en:"Dirt/Soil", tr:"Toprak/Toz"}, {t:"Үүл", p:"Üül", en:"Cloud", tr:"Bulut"}, {t:"Манан", p:"Manan", en:"Fog", tr:"Sis"},
+                {t:"Аянга", p:"Ayanga", en:"Thunder", tr:"Gök gürültüsü"}, {t:"Шуурга", p:"Shuurga", en:"Storm", tr:"Fırtına"}, {t:"Өвөл", p:"Övöl", en:"Winter", tr:"Kış"},
+                {t:"Хавар", p:"Khavar", en:"Spring", tr:"İlkbahar"}, {t:"Зун", p:"Zun", en:"Summer", tr:"Yaz"}, {t:"Намар", p:"Namar", en:"Autumn", tr:"Sonbahar"},
+                {t:"Жил", p:"Jil", en:"Year", tr:"Yıl"}
             ],
             idioms: [
                 {t:"Чихэн дээр цэцэг ургах", p:"Chikhen deer tsetseg urgakh", en:"To be flattered. (Lit: Flowers growing on ears)", tr:"Çok gururlanmak. (Kelime: Kulaklarda çiçek açması)"},
                 {t:"Мориноос унах", p:"Morinoos unakh", en:"To fail at a task. (Lit: To fall from a horse)", tr:"Bir işte başarısız olmak. (Kelime: Attan düşmek)"},
                 {t:"Гар цайлгах", p:"Gar tsailgakh", en:"To give a tip/gift. (Lit: To make hands white)", tr:"Hediye/bahşiş vermek. (Kelime: Elleri beyazlatmak)"},
-                {t:"Салхи оруулах", p:"Salkhi oruulakh", en:"To get fresh air. (Lit: To let wind enter)", tr:"Hava almak. (Kelime: Rüzgar sokmak)"}
+                {t:"Салхи оруулах", p:"Salkhi oruulakh", en:"To get fresh air. (Lit: To let wind enter)", tr:"Hava almak. (Kelime: Rüzgar sokmak)"},
+                {t:"Нүдэн дээр", p:"Nüden deer", en:"In plain sight. (Lit: On the eyes)", tr:"Göz önünde, alenen. (Kelime: Gözlerin üzerinde)"},
+                {t:"Санаа алдах", p:"Sanaa aldakh", en:"To sigh out of relief/sadness. (Lit: To lose thought)", tr:"İç çekmek. (Kelime: Düşünceyi kaybetмек)"},
+                {t:"Хөл хөнгөн", p:"Khöl khöngön", en:"Agile / Having an easy pregnancy. (Lit: Light feet)", tr:"Çevik / Hamileliği rahat geçiren. (Kelime: Hafif ayaklar)"},
+                {t:"Ам алдах", p:"Am aldakh", en:"To reveal a secret accidentally. (Lit: To lose mouth)", tr:"Ağzından kaçırmak. (Kelime: Ağzı kaybetmek)"},
+                {t:"Нүүр хагарах", p:"Nüür khagarakh", en:"To lose shyness. (Lit: Face breaking)", tr:"Yüzsüzleşmek, çekingenliği atmak. (Kelime: Yüzün kırılması)"},
+                {t:"Элэг хөших", p:"Eleg khöshikh", en:"To laugh incredibly hard. (Lit: Liver stiffening)", tr:"Gülmekten yarılmak. (Kelime: Karaciğerin katılaşması)"},
+                {t:"Зүрх үхэх", p:"Zürkh ükhekh", en:"To lose hope completely. (Lit: Heart dying)", tr:"Umudunu yitirmek. (Kelime: Kalbin ölmesi)"},
+                {t:"Шүд зуух", p:"Shüd zuukh", en:"To endure hardship. (Lit: To bite teeth)", tr:"Dişini sıkmak, sabretmek. (Kelime: Diş ısırmak)"},
+                {t:"Яс махандаа тулсан", p:"Yas makhandaa tulsan", en:"Extremely exhausted/pained. (Lit: Reaching bone and meat)", tr:"Canına tak etmek. (Kelime: Kemik ve ete dayanmak)"},
+                {t:"Тэнгэрт тулсан", p:"Tengert tulsan", en:"Exorbitantly high. (Lit: Touching the sky)", tr:"Çok yüksek, uçuk (fiyat/ego). (Kelime: Gökyüzüne dayanan)"},
+                {t:"Нохойн битүү туурай", p:"Nokhoin bitüü tuurai", en:"Something completely impossible. (Lit: Dog's solid hooves)", tr:"Kesinlikle imkansız bir şey. (Kelime: Köpeğin bitişik toynağı)"},
+                {t:"Нүд унагах", p:"Nüd unagakh", en:"To deeply desire something. (Lit: To drop an eye)", tr:"Göz koymak, çok istemek. (Kelime: Göz düşürmek)"},
+                {t:"Толгой эргэх", p:"Tolgoi ergekh", en:"To be confused. (Lit: Head spinning)", tr:"Kafası karışmak. (Kelime: Baş dönmesi)"},
+                {t:"Ам таглах", p:"Am taglakh", en:"To silence someone. (Lit: To plug mouth)", tr:"Ağzını tıkamak, susturmak. (Kelime: Ağız tıkamak)"},
+                {t:"Мөрөө хөөх", p:"Möröö khöökh", en:"To mind one's own business. (Lit: Chase own footprint)", tr:"Kendi işine bakmak. (Kelime: İzini kovalamak)"},
+                {t:"Сэтгэл хөрөх", p:"Setgel khörökh", en:"To lose affection. (Lit: Soul cooling)", tr:"Gönlü soğumak. (Kelime: Ruhu soğumak)"},
+                {t:"Үг хаях", p:"Üg khayakh", en:"To drop a hint / mock. (Lit: To throw word)", tr:"Laf sokmak, ima etmek. (Kelime: Söz fırlatmak)"},
+                {t:"Чих халууцах", p:"Chikh khaluutsakh", en:"Ears burning (someone is talking about you).", tr:"Kulakları çınlamak. (Kelime: Kulağı ısınmak)"},
+                {t:"Ус цацах", p:"Us tsatsakh", en:"To ruin a plan. (Lit: To splash water)", tr:"Bir işi bozmak, suya düşürmek. (Kelime: Su sıçratmak)"},
+                {t:"Нүд хуурах", p:"Nüd khuurakh", en:"To deceive visually. (Lit: To cheat eye)", tr:"Göz boyamak. (Kelime: Göz kandırmak)"},
+                {t:"Гараа угаах", p:"Garaa ugaakh", en:"To wash one's hands of a situation.", tr:"Bir işten elini yıkamak/çekmek."}
             ],
             proverbs: [
-                {t:"Хоосон сав дуу ихтэй", p:"Khooson sav duu ikhtei", en:"Empty vessels make the most noise.", tr:"Boş teneke çok ses çıkarır."},
+                {t:"Аавын бийд хүн тань, агтын бийд газар тань", p:"Aavyn biid khün tan'...", en:"Make connections while father lives, travel while horse is strong.", tr:"Baban hayattayken insan tanı, atın güçlüyken yer gez."},
+                {t:"Зан нь эвдэрхийгээр заяа нь эвдэр", p:"Zan n' evderkhiigeer...", en:"Better a broken destiny than a broken character.", tr:"Kaderin kırık olması, karakterin bozuk olmasından iyidir."},
+                {t:"Эрт босвол нэгийг үзнэ, орой унтвал нэгийг дуулна", p:"Ert bosvol negiig üzne...", en:"Early riser sees, late sleeper hears.", tr:"Erken kalkan bir şey görür, geç uyuyan bir şey duyar."},
                 {t:"Олон хавар нэгэндээ", p:"Olon khavar negendee", en:"You can't get away with bad deeds forever. (Lit: Many springs end in one)", tr:"Su testisi su yolunda kırılır. (Kelime: Birçok ilkbahar birinde biter)"},
-                {t:"Дусал дуслаар далай болно", p:"Dusal duslaar dalai bolno", en:"Every little bit helps. (Lit: Drop by drop becomes an ocean)", tr:"Damlaya damlaya göl olur."}
+                {t:"Эзнээ хичээвэл заяа хичээнэ", p:"Eznee khicheevel zaya khicheene", en:"God helps those who help themselves. (Lit: If owner tries, destiny tries)", tr:"Kendi çabalayana kader de yardım eder."},
+                {t:"Айвал бүү хий, хийвэл бүү ай", p:"Aival büü khii...", en:"If you fear, don't do it; if you do it, don't fear.", tr:"Korkuyorsan yapma, yapıyorsan korkma."},
+                {t:"Ус уусан худагтаа нулимдаггүй", p:"Us uusan khudagtaa...", en:"Don't bite the hand that feeds you. (Lit: Don't spit in the well)", tr:"İçtiğin kuyuya tükürme."},
+                {t:"Хүн ахтай, дээл захтай", p:"Khün akhtai, deel zakhtai", en:"Respect for elders and structure is essential. (Lit: Person has elder, coat has collar)", tr:"İnsanın büyüğü, kaftanın yakası olur."},
+                {t:"Хоосон сав дуу ихтэй", p:"Khooson sav duu ikhtei", en:"Empty vessels make the most noise.", tr:"Boş teneke çok ses çıkarır."},
+                {t:"Гавшаад газар хороохгүй", p:"Gavshaad gazar khorookhqüi", en:"Haste makes waste. (Lit: Rushing doesn't shorten land)", tr:"Acele işe şeytan karışır. (Kelime: Acele etmek yeri kısaltmaz)"},
+                {t:"Сайныг дагавал сарны гэрэл, мууг дагавал могойн хор", p:"Sainyig dagaval sarny gerel...", en:"You are influenced by your company.", tr:"İyiyi izlersen ay ışığı, kötüyü izlersen yılan zehiri."},
+                {t:"Өөрийн толгой дээрх бухлыг харахгүй байж...", p:"Ööriin tolgoi deerkh...", en:"Hypocrisy. (Lit: Not seeing haystack on own head, but grass on another's)", tr:"Kendi başındaki saman balyasını görmez, elin başındaki otu görür."},
+                {t:"Үнэнээр явбал үхэр тэргээр туулай гүйцнэ", p:"Üneneer yavbal ükher tergeer...", en:"Honesty slowly but surely wins. (Lit: With truth, ox cart catches rabbit)", tr:"Doğru giden öküz arabasıyla tavşanı yakalar."},
+                {t:"Мэддэгт мэргэн цоохор, мэддэггүйд эрээн цоохор", p:"Meddegt mergen tsookhor...", en:"Knowledge makes things clear.", tr:"Bilen için anlamlı desen, bilmeyen için karmaşık benek."},
+                {t:"Дусал дуслаар далай болно", p:"Dusal duslaar dalai bolno", en:"Drop by drop becomes an ocean.", tr:"Damlaya damlaya göl olur."},
+                {t:"Яарвал даарна", p:"Yaarval daarna", en:"Haste makes waste. (Lit: If you rush, you'll get cold)", tr:"Acele eden üşür."},
+                {t:"Сурсан далай, сураагүй балай", p:"Sursan dalai, suraaqüi balai", en:"Knowledge is an ocean, ignorance is darkness.", tr:"Öğrenen derya olur, öğrenmeyen bela."},
+                {t:"Эхийг нь эцээж, тугалыг нь тураахгүй", p:"Ekhiig n' etseej...", en:"A win-win situation. (Lit: Not exhausting mother, not starving calf)", tr:"Ne şiş yansın ne kebap. (Ne anneyi yor, ne buzağıyı aç bırak)"},
+                {t:"Тэнэг хүн дуугүй байвал ухаантай харагдана", p:"Teneg khün duuqüi baival...", en:"A fool looks wise when silent.", tr:"Aptal insan susarsa akıllı görünür."},
+                {t:"Мал өсвөл ам тосдоно", p:"Mal ösvöl am tosdono", en:"Wealth brings comfort. (Lit: If livestock grows, mouth gets greasy)", tr:"Sürü büyürse ağız yağlanır."},
+                {t:"Эрхийг сурахаар бэрхийг сур", p:"Erkhiig surakhaar berkhiig sur", en:"Learn the hard way, not the easy way.", tr:"Kolayı öğreneceğine zoru öğren."},
+                {t:"Зуун ямаанд жаран ухна", p:"Zuun yamaand jaran ukhna", en:"Too many chiefs, not enough Indians. (Lit: 60 bucks for 100 goats)", tr:"Yüz keçiye altmış teke (Gereğinden fazla yönetici)."},
+                {t:"Модны үндэс далд, хүний сэтгэл далд", p:"Modny ündes dald...", en:"True feelings are hidden. (Lit: Tree roots hidden, human soul hidden)", tr:"Ağacın kökü gizli, insanın kalbi gizli."},
+                {t:"Цаг цагаараа байдаггүй, цахилдаг хөхөөрөө байдаггүй", p:"Tsag tsagaaraa baidaqqüi...", en:"Things change. (Lit: Time isn't always time, iris isn't always blue)", tr:"Zaman hep aynı kalmaz, süsen çiçeği hep mavi kalmaz."},
+                {t:"Тэвчээр нь ялалтын үндэс", p:"Tevcheer n' yalaltyn ündes", en:"Patience is the root of victory.", tr:"Sabır zaferin köküdür."}
             ],
             specials: [
                 {t:"Айраг", p:"Airag", en:"Fermented mare's milk beverage.", tr:"Kımız (Fermente kısrak sütü)."},
-                {t:"Наадам", p:"Naadam", en:"Traditional summer festival.", tr:"Geleneksel yaz festivali."},
-                {t:"Морин хуур", p:"Morin Khuur", en:"The 'Horsehead fiddle'.", tr:"Geleneksel at kafalı yaylı çalgı."}
+                {t:"Наадам", p:"Naadam", en:"Traditional summer festival (wrestling, racing, archery).", tr:"Geleneksel yaz festivali."},
+                {t:"Морин хуур", p:"Morin Khuur", en:"The 'Horsehead fiddle' instrument.", tr:"Geleneksel at kafalı yaylı çalgı."},
+                {t:"Хадаг", p:"Khadag", en:"A blue ceremonial silk scarf given as a blessing.", tr:"Saygı ve bereket sembolü mavi ipek eşarp."},
+                {t:"Уурга", p:"Uurga", en:"A long wooden pole with a lasso for catching horses.", tr:"At yakalamak için kullanılan uzun kementli sırık."},
+                {t:"Дээл", p:"Deel", en:"The traditional Mongolian long tunic/coat.", tr:"Geleneksel uzun Moğol kıyafeti/kaftanı."},
+                {t:"Хуушуур", p:"Khuushuur", en:"Deep-fried meat pastry.", tr:"Kızarmış etli hamur işi (Çiğ börek benzeri)."},
+                {t:"Бууз", p:"Buuz", en:"Steamed meat dumplings.", tr:"Buharda pişen etli mantı (Mantı)."},
+                {t:"Цагаан сар", p:"Tsagaan Sar", en:"The Mongolian Lunar New Year.", tr:"Moğol Ay Yeni Yılı (Beyaz Ay)."},
+                {t:"Овоо", p:"Ovoo", en:"A sacred shamanic stone heap on mountain passes.", tr:"Dağ geçitlerindeki kutsal şamanik taş yığınları."},
+                {t:"Зуд", p:"Zud", en:"Severe winter disaster causing livestock starvation.", tr:"Hayvanların donarak/açlıktan öldüğü felaket kışı."},
+                {t:"Тооно", p:"Toono", en:"The circular roof opening of a traditional Ger.", tr:"Geleneksel çadırın dairesel tepe/çatı açıklığı."}
             ]
         },
         tr: {
@@ -384,23 +536,98 @@
                 {t:"Rüya", p:"Roo-ya", en:"Dream", tr:"Rüya"}, {t:"Gerçek", p:"Ger-chek", en:"Truth/Real", tr:"Gerçek"}, {t:"Yalan", p:"Ya-lan", en:"Lie", tr:"Yalan"},
                 {t:"Kedi", p:"Ke-di", en:"Cat", tr:"Kedi"}, {t:"Köpek", p:"Ko-pek", en:"Dog", tr:"Köpek"}, {t:"Ağaç", p:"A-ach", en:"Tree", tr:"Ağaç"},
                 {t:"Çiçek", p:"Chi-chek", en:"Flower", tr:"Çiçek"}, {t:"Ev", p:"Ev", en:"House", tr:"Ev"}, {t:"Şehir", p:"She-hir", en:"City", tr:"Şehir"},
-                {t:"Güzel", p:"Goo-zel", en:"Beautiful", tr:"Güzel"}, {t:"Zor", p:"Zor", en:"Difficult", tr:"Zor"}, {t:"Kolay", p:"Ko-lay", en:"Easy", tr:"Kolay"}
+                {t:"Güzel", p:"Goo-zel", en:"Beautiful", tr:"Güzel"}, {t:"Zor", p:"Zor", en:"Difficult", tr:"Zor"}, {t:"Kolay", p:"Ko-lay", en:"Easy", tr:"Kolay"},
+                {t:"Merhaba", p:"Mer-ha-ba", en:"Hello", tr:"Merhaba"}, {t:"Evet", p:"E-vet", en:"Yes", tr:"Evet"}, {t:"Hayır", p:"Ha-yir", en:"No", tr:"Hayır"},
+                {t:"Lütfen", p:"Lut-fen", en:"Please", tr:"Lütfen"}, {t:"Anne", p:"An-ne", en:"Mother", tr:"Anne"}, {t:"Baba", p:"Ba-ba", en:"Father", tr:"Baba"},
+                {t:"Çocuk", p:"Cho-juk", en:"Child", tr:"Çocuk"}, {t:"Okul", p:"O-kul", en:"School", tr:"Okul"}, {t:"Öğretmen", p:"O-ret-men", en:"Teacher", tr:"Öğretmen"},
+                {t:"Öğrenci", p:"O-ren-ji", en:"Student", tr:"Öğrenci"}, {t:"Para", p:"Pa-ra", en:"Money", tr:"Para"}, {t:"Kuş", p:"Koosh", en:"Bird", tr:"Kuş"},
+                {t:"Balık", p:"Ba-lik", en:"Fish", tr:"Balık"}, {t:"Sıcak", p:"Si-jak", en:"Hot", tr:"Sıcak"}, {t:"Soğuk", p:"So-ook", en:"Cold", tr:"Soğuk"},
+                {t:"Büyük", p:"Bu-yuk", en:"Big", tr:"Büyük"}, {t:"Küçük", p:"Ku-chuk", en:"Small", tr:"Küçük"}, {t:"Hızlı", p:"Hiz-li", en:"Fast", tr:"Hızlı"},
+                {t:"Yavaş", p:"Ya-vash", en:"Slow", tr:"Yavaş"}, {t:"Yeni", p:"Ye-ni", en:"New", tr:"Yeni"}, {t:"Eski", p:"Es-ki", en:"Old", tr:"Eski"},
+                {t:"Sabah", p:"Sa-bah", en:"Morning", tr:"Sabah"}, {t:"Akşam", p:"Ak-sham", en:"Evening", tr:"Akşam"}, {t:"Gece", p:"Ge-je", en:"Night", tr:"Gece"},
+                {t:"Bugün", p:"Bu-gun", en:"Today", tr:"Bugün"}, {t:"Yarın", p:"Ya-rin", en:"Tomorrow", tr:"Yarın"}, {t:"Dün", p:"Dun", en:"Yesterday", tr:"Dün"},
+                {t:"Hafta", p:"Haf-ta", en:"Week", tr:"Hafta"}, {t:"Ay", p:"Ai", en:"Month", tr:"Ay"}, {t:"Yıl", p:"Yil", en:"Year", tr:"Yıl"},
+                {t:"Pazartesi", p:"Pa-zar-te-si", en:"Monday", tr:"Pazartesi"}, {t:"Salı", p:"Sa-li", en:"Tuesday", tr:"Salı"}, {t:"Çarşamba", p:"Char-sham-ba", en:"Wednesday", tr:"Çarşamba"},
+                {t:"Perşembe", p:"Per-shem-be", en:"Thursday", tr:"Perşembe"}, {t:"Cuma", p:"Ju-ma", en:"Friday", tr:"Cuma"}, {t:"Cumartesi", p:"Ju-mar-te-si", en:"Saturday", tr:"Cumartesi"},
+                {t:"Pazar", p:"Pa-zar", en:"Sunday", tr:"Pazar"}, {t:"Bir", p:"Bir", en:"One", tr:"Bir"}, {t:"İki", p:"I-ki", en:"Two", tr:"İki"},
+                {t:"Üç", p:"Uch", en:"Three", tr:"Üç"}, {t:"Dört", p:"Dort", en:"Four", tr:"Dört"}, {t:"Beş", p:"Besh", en:"Five", tr:"Beş"},
+                {t:"Altı", p:"Al-ti", en:"Six", tr:"Altı"}, {t:"Yedi", p:"Ye-di", en:"Seven", tr:"Yedi"}, {t:"Sekiz", p:"Se-kiz", en:"Eight", tr:"Sekiz"},
+                {t:"Dokuz", p:"Do-kuz", en:"Nine", tr:"Dokuz"}, {t:"On", p:"On", en:"Ten", tr:"On"}, {t:"Yemek", p:"Ye-mek", en:"Food/To eat", tr:"Yemek"},
+                {t:"İçmek", p:"Ich-mek", en:"To drink", tr:"İçmek"}, {t:"Uyumak", p:"U-yu-mak", en:"To sleep", tr:"Uyumak"}, {t:"Gitmek", p:"Git-mek", en:"To go", tr:"Gitmek"},
+                {t:"Gelmek", p:"Gel-mek", en:"To come", tr:"Gelmek"}, {t:"Yapmak", p:"Yap-mak", en:"To do", tr:"Yapmak"}, {t:"Konuşmak", p:"Ko-nush-mak", en:"To speak", tr:"Konuşmak"},
+                {t:"Anlamak", p:"An-la-mak", en:"To understand", tr:"Anlamak"}, {t:"Bilmek", p:"Bil-mek", en:"To know", tr:"Bilmek"}, {t:"Sevmek", p:"Sev-mek", en:"To love", tr:"Sevmek"},
+                {t:"Görmek", p:"Gor-mek", en:"To see", tr:"Görmek"}, {t:"Bakmak", p:"Bak-mak", en:"To look", tr:"Bakmak"}, {t:"Kırmızı", p:"Kir-mi-zi", en:"Red", tr:"Kırmızı"},
+                {t:"Mavi", p:"Ma-vi", en:"Blue", tr:"Mavi"}, {t:"Yeşil", p:"Ye-shil", en:"Green", tr:"Yeşil"}, {t:"Sarı", p:"Sa-ri", en:"Yellow", tr:"Sarı"},
+                {t:"Siyah", p:"Si-yah", en:"Black", tr:"Siyah"}, {t:"Beyaz", p:"Be-yaz", en:"White", tr:"Beyaz"}, {t:"İnsan", p:"In-san", en:"Human", tr:"İnsan"},
+                {t:"Kalp", p:"Kalp", en:"Heart", tr:"Kalp"}, {t:"Göz", p:"Goz", en:"Eye", tr:"Göz"}, {t:"El", p:"El", en:"Hand", tr:"El"}
             ],
             idioms: [
-                {t:"Göze girmek", p:"Go-ze gir-mek", en:"To gain favor. (Lit: To enter the eye)", tr:"Göze girmek."},
+                {t:"Göze girmek", p:"Go-ze gir-mek", en:"To gain favor. (Lit: To enter the eye)", tr:"Gözde olmak, beğeni kazanmak. (Kelime: Göze girmek)"},
                 {t:"Etekleri zil çalmak", p:"E-tek-le-ri zil chal-mak", en:"To be extremely excited. (Lit: Skirt bells ringing)", tr:"Çok heyecanlanmak, sevinmek. (Kelime: Etekleri zil çalmak)"},
                 {t:"Pireyi deve yapmak", p:"Pi-re-yi de-ve yap-mak", en:"To exaggerate. (Lit: To make a camel out of a flea)", tr:"Bir şeyi çok abartmak. (Kelime: Pireyi deve yapmak)"},
-                {t:"Çam devirmek", p:"Cham de-vir-mek", en:"To make a blunder. (Lit: To knock down a pine tree)", tr:"Pot kırmak, istenmeyen laf etmek. (Kelime: Çam devirmek)"}
+                {t:"Çam devirmek", p:"Cham de-vir-mek", en:"To make a blunder. (Lit: To knock down a pine tree)", tr:"Pot kırmak, istenmeyen laf etmek. (Kelime: Çam devirmek)"},
+                {t:"Küplere binmek", p:"Kup-le-re bin-mek", en:"To get extremely angry. (Lit: To ride the jars)", tr:"Çok öfkelenmek. (Kelime: Küplere binmek)"},
+                {t:"İpe un sermek", p:"I-pe un ser-mek", en:"To make excuses to avoid work. (Lit: Spread flour on rope)", tr:"Bahane üreterek işten kaçmak. (Kelime: İpe un sermek)"},
+                {t:"Hapı yutmak", p:"Ha-pi yut-mak", en:"To be in big trouble. (Lit: To swallow the pill)", tr:"Başı büyük belaya girmek. (Kelime: Hapı yutmak)"},
+                {t:"Gözden düşmek", p:"Goz-den dush-mek", en:"To lose favor. (Lit: To fall from the eye)", tr:"Eski değerini, sevgisini yitirmek. (Kelime: Gözden düşmek)"},
+                {t:"Kafa ütülemek", p:"Ka-fa u-tu-le-mek", en:"To talk too much and annoy. (Lit: To iron the head)", tr:"Çok konuşup baş ağrıtmak. (Kelime: Kafa ütülemek)"},
+                {t:"Baltayı taşa vurmak", p:"Bal-ta-yi ta-sha vur-mak", en:"To accidentally offend. (Lit: To hit the axe on a stone)", tr:"Farkında olmadan pot kırmak, karşısındakini kızdırmak."},
+                {t:"Avucunun içi gibi bilmek", p:"A-vu-ju-nun i-chi gi-bi bil-mek", en:"To know perfectly. (Lit: To know like the palm of one's hand)", tr:"Bir yeri/konuyu çok iyi bilmek."},
+                {t:"Sinek avlamak", p:"Si-nek av-la-mak", en:"To have no customers/business. (Lit: To hunt flies)", tr:"Müşterisi olmamak, iş yapamamak."},
+                {t:"Ağzı kulaklarına varmak", p:"A-zi ku-lak-la-ri-na var-mak", en:"To smile broadly. (Lit: Mouth reaching ears)", tr:"Çok sevinmekten kocaman gülümsemek."},
+                {t:"Keçileri kaçırmak", p:"Ke-chi-le-ri ka-chir-mak", en:"To go crazy. (Lit: To let the goats escape)", tr:"Aklını oynatmak, çıldırmak."},
+                {t:"Dudak ısırmak", p:"Du-dak i-sir-mak", en:"To be amazed/jealous. (Lit: To bite lip)", tr:"Şaşırmak veya hayran kalmak."},
+                {t:"Tadı damağında kalmak", p:"Ta-di da-ma-in-da kal-mak", en:"To leave a sweet memory. (Lit: Taste remains on palate)", tr:"Çok hoşa giden bir şeyin etkisinin sürmesi."},
+                {t:"Zıvanadan çıkmak", p:"Zi-va-na-dan chik-mak", en:"To lose control completely.", tr:"Kontrolünü kaybedip çok öfkelenmek."},
+                {t:"Ateş pahası", p:"A-tesh pa-ha-si", en:"Extremely expensive. (Lit: Price of fire)", tr:"Çok pahalı."},
+                {t:"Bıçak kemiğe dayanmak", p:"Bi-chak ke-mi-e da-yan-mak", en:"To reach the limit of patience. (Lit: Knife touching bone)", tr:"Sabrın veya dayanma gücünün sonuna gelmek."},
+                {t:"Göz boyamak", p:"Goz bo-ya-mak", en:"To deceive visually. (Lit: To paint the eye)", tr:"Gösterişle kandırmak."},
+                {t:"Kulağına küpe olmak", p:"Ku-la-i-na ku-pe ol-mak", en:"To be a lesson not to forget. (Lit: To be an earring)", tr:"Bir olaydan unutulmayacak ders çıkarmak."},
+                {t:"Maydanoz olmak", p:"May-da-noz ol-mak", en:"To meddle in everything. (Lit: To be parsley)", tr:"Her işe burnunu sokmak."},
+                {t:"Saman altından su yürütmek", p:"Sa-man al-tin-dan su yu-rut-mek", en:"To do things secretly. (Lit: Run water under straw)", tr:"İşlerini gizlice halletmek."},
+                {t:"Sırtı yere gelmemek", p:"Sir-ti ye-re gel-me-mek", en:"To be unbeatable. (Lit: Back not touching ground)", tr:"Hiçbir zaman yenilmemek."},
+                {t:"Yüz vermemek", p:"Yuz ver-me-mek", en:"To ignore/act cold. (Lit: Not give face)", tr:"Soğuk davranmak, ilgi göstermemek."}
             ],
             proverbs: [
                 {t:"Damlaya damlaya göl olur", p:"Dam-la-ya dam-la-ya gol o-lur", en:"Little things add up. (Lit: Drop by drop becomes a lake)", tr:"Küçük birikimler büyür. (Kelime: Damlaya damlaya göl olur)"},
                 {t:"Acele işe şeytan karışır", p:"A-je-le i-she shey-tan ka-ri-shir", en:"Haste makes waste. (Lit: The devil mixes with hurried work)", tr:"Hızlı ve dikkatsiz yapılan iş bozuk olur."},
-                {t:"Gülü sever dikenine katlanır", p:"Goo-loo se-ver di-ke-ni-ne kat-la-nir", en:"Accept the bad with the good. (Lit: The rose lover bears its thorns)", tr:"İyi bir şey için zorluklara katlanmak gerekir."}
+                {t:"Gülü seven dikenine katlanır", p:"Goo-loo se-ven di-ke-ni-ne kat-la-nir", en:"Accept the bad with the good. (Lit: The rose lover bears its thorns)", tr:"İyi bir şey için zorluklara katlanmak gerekir."},
+                {t:"Sakla samanı, gelir zamanı", p:"Sak-la sa-ma-ni, ge-lir za-ma-ni", en:"Save for a rainy day. (Lit: Hide the straw, its time will come)", tr:"Gereksiz görünen şeyler ileride lazım olabilir."},
+                {t:"Gülme komşuna, gelir başına", p:"Gul-me kom-shu-na, ge-lir ba-shi-na", en:"Don't laugh at your neighbor's bad luck, it will happen to you.", tr:"Başkalarının kötülüğüne sevinme, aynı duruma düşersin."},
+                {t:"Dost kara günde belli olur", p:"Dost ka-ra gun-de bel-li o-lur", en:"A friend in need is a friend indeed. (Lit: A friend is evident on a black day)", tr:"Gerçek dost zor zamanlarda yanında olandır."},
+                {t:"Ayağını yorganına göre uzat", p:"A-ya-i-ni yor-ga-ni-na go-re u-zat", en:"Cut your coat according to your cloth. (Lit: Stretch your feet to your quilt)", tr:"Giderini gelirine göre ayarla."},
+                {t:"İşleyen demir ışıldar", p:"Ish-le-yen de-mir i-shil-dar", en:"Practice makes perfect. (Lit: Working iron shines)", tr:"Çalışan, üreten kişi dinç ve yetenekli kalır."},
+                {t:"Vakit nakittir", p:"Va-kit na-kit-tir", en:"Time is money. (Lit: Time is cash)", tr:"Zaman çok değerlidir."},
+                {t:"Öfke ile kalkan zararla oturur", p:"Of-ke i-le kal-kan za-rar-la o-tu-rur", en:"Acting in anger brings loss.", tr:"Kızgınlıkla yapılan işin sonu pişmanlıktır."},
+                {t:"Tatlı dil yılanı deliğinden çıkarır", p:"Tat-li dil yi-la-ni de-li-in-den chi-ka-rir", en:"Politeness solves problems. (Lit: Sweet tongue draws snake from hole)", tr:"Güzel ve yumuşak sözle halledilemeyecek sorun yoktur."},
+                {t:"Üzüm üzüme baka baka kararır", p:"U-zum u-zu-me ba-ka ba-ka ka-ra-rir", en:"You become like those you spend time with. (Lit: Grape darkens looking at grape)", tr:"Kişi, arkadaşlık ettiği kimsenin huyunu kapar."},
+                {t:"Ağaç yaşken eğilir", p:"A-ach yash-ken e-i-lir", en:"Education is best when young. (Lit: The tree bends when wet)", tr:"Eğitim çocuk yaşta başlar."},
+                {t:"Denize düşen yılana sarılır", p:"De-ni-ze du-shen yi-la-na sa-ri-lir", en:"Desperate times call for desperate measures.", tr:"Zor durumda kalan kişi, normalde kaçınacağı çözümlere başvurur."},
+                {t:"Davulun sesi uzaktan hoş gelir", p:"Da-vu-lun se-si u-zak-tan hosh ge-lir", en:"Things look better from a distance.", tr:"İçinde bulunulmayan durumlar dışarıdan kolay/güzel görünür."},
+                {t:"Ne ekersen onu biçersin", p:"Ne e-ker-sen o-nu bi-cher-sin", en:"You reap what you sow.", tr:"İnsan nasıl davranırsa öyle karşılık görür."},
+                {t:"Köpek havlamakla kervan yürümez", p:"Ko-pek hav-la-mak-la ker-van yu-ru-mez", en:"Ignore the haters. (Lit: Dogs bark, caravan moves)", tr:"Boş laflar ve eleştiriler asıl işi durduramaz."},
+                {t:"Meyve veren ağaç taşlanır", p:"Mey-ve ve-ren a-ach tash-la-nir", en:"Successful people are criticized.", tr:"Başarılı olan kişiler her zaman eleştirilir."},
+                {t:"Akıl yaşta değil baştadır", p:"A-kil yash-ta de-il bash-ta-dir", en:"Wisdom comes from the head, not age.", tr:"Akıllı olmanın yaşla ilgisi yoktur."},
+                {t:"Azı karar, çoğu zarar", p:"A-zi ka-rar, cho-u za-rar", en:"Moderation in all things.", tr:"Her şeyin fazlası zararlıdır."},
+                {t:"Besle kargayı oysun gözünü", p:"Bes-le kar-ga-yi oy-sun go-zu-nu", en:"Bite the hand that feeds you. (Lit: Feed crow, it pecks eye)", tr:"İyilik yapılan kişinin nankörlük etmesi."},
+                {t:"Güneş girmeyen eve doktor girer", p:"Gu-nesh gir-me-yen e-ve dok-tor gi-rer", en:"Sunlight is vital for health. (Lit: Doctor enters hous without sun)", tr:"Güneş ışığı sağlığın temelidir."},
+                {t:"Hatasız kul olmaz", p:"Ha-ta-siz kul ol-maz", en:"Nobody is perfect.", tr:"Herkes hata yapabilir."},
+                {t:"Zararın neresinden dönülse kârdır", p:"Za-ra-rin ne-re-sin-den do-nul-se kar-dir", en:"Cut your losses early.", tr:"Kötü giden bir işten vazgeçmek kazançtır."},
+                {t:"Söz gümüşse sükut altındır", p:"Soz gu-mush-se su-kut al-tin-dir", en:"Silence is golden.", tr:"Konuşmak iyi olabilir ama susmak çoğu zaman daha değerlidir."}
             ],
             specials: [
                 {t:"Yakamoz", p:"Ya-ka-moz", en:"Phosphorescence of the moon on water.", tr:"Ayın veya ışığın su yüzeyindeki parıltısı."},
                 {t:"Hüzün", p:"Hoo-zoon", en:"Melancholic nostalgia.", tr:"Derin, manevi bir üzüntü veya melankoli."},
-                {t:"Kolay gelsin", p:"Ko-lay gel-sin", en:"May it come easy (encouragement).", tr:"Çalışan birine söylenen iyi dilek sözü."}
+                {t:"Kolay gelsin", p:"Ko-lay gel-sin", en:"May it come easy (encouragement).", tr:"Çalışan birine söylenen iyi dilek sözü."},
+                {t:"Gönül", p:"Go-nul", en:"The heart, specifically the seat of emotion.", tr:"Duyguların, sevginin kaynağı olan manevi kalp."},
+                {t:"Kısmet", p:"Kis-met", en:"Fate, destiny, accepting what happens.", tr:"Alınyazısı, nasip."},
+                {t:"Naz", p:"Naz", en:"Feigning reluctance or coyness.", tr:"İsteksiz görünerek kendini beğendirme çabası."},
+                {t:"Üşenmek", p:"U-shen-mek", en:"To be too lazy or lack the will to do something.", tr:"Bir işi yapmaya erinmek, tembellik etmek."},
+                {t:"Şifa", p:"Shi-fa", en:"Healing, cure.", tr:"Hastalığın iyileşmesi, derman."},
+                {t:"Estafurullah", p:"Es-ta-fu-rul-lah", en:"Don't mention it / Not at all (humility).", tr:"Övgü karşısında alçakgönüllülük ifade eden söz."},
+                {t:"Başın sağ olsun", p:"Ba-shin sa ol-sun", en:"Standard condolence: 'May your head be healthy'.", tr:"Taziye sırasında söylenen başsağlığı dileği."},
+                {t:"Elinize sağlık", p:"E-li-ni-ze sa-lik", en:"'Health to your hands' (Said to the cook).", tr:"Yemek yapan kişiye veya bir işi başarana söylenen söz."},
+                {t:"Hayırlısı", p:"Ha-yir-li-si", en:"Whatever is best (Leaving outcome to fate).", tr:"En iyisi neyse o olsun dileği."}
             ]
         }
     };
@@ -414,7 +641,7 @@
         theme: 'light',
         date: new Date(),
         calDate: new Date(),
-        lastQuizWord: null // Memory variable to prevent repetition
+        lastQuizWord: null 
     };
 
     function initSettings() {
@@ -451,7 +678,8 @@
         for (const [key, lang] of Object.entries(CONFIG)) {
             const btn = document.createElement('button');
             btn.className = `choice-btn ${state.target === key ? 'selected' : ''}`;
-            btn.innerHTML = `<span style="font-size:1.5rem">${lang.symbol}</span> ${lang.name[state.interface]}`;
+            // Inject Custom SVG Logo into buttons
+            btn.innerHTML = `<div style="height:45px; display:flex; justify-content:center; align-items:center; margin-bottom:5px; color:${lang.colors.primary}">${lang.logoSVG}</div> ${lang.name[state.interface]}`;
             btn.onclick = () => {
                 state.target = key;
                 buildTargetGrid(); 
@@ -481,7 +709,7 @@
     }
 
     function startApp() {
-        if(!state.target) return alert("Please select a language to learn.");
+        if(!state.target) return alert(state.interface === 'en' ? "Please select a language to learn." : "Lütfen öğrenmek istediğiniz dili seçin.");
         localStorage.setItem('poly_target', state.target);
         localStorage.setItem('poly_interface', state.interface);
         
@@ -513,8 +741,9 @@
         document.documentElement.style.setProperty('--accent', conf.colors.accent);
         document.documentElement.style.setProperty('--danger', conf.colors.danger);
         
-        document.getElementById('header-symbol').innerHTML = conf.symbol;
-        document.getElementById('header-title').textContent = conf.name[state.interface] + " Archive";
+        document.getElementById('header-symbol').innerHTML = conf.logoSVG;
+        document.body.style.backgroundImage = conf.bgPattern;
+        document.getElementById('header-title').textContent = conf.name[state.interface] + " Practice";
     }
 
     function applyInterfaceTranslations() {
@@ -681,6 +910,7 @@
             safety++;
         }
         
+        // Fisher-Yates Shuffle
         for (let i = options.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [options[i], options[j]] = [options[j], options[i]];
