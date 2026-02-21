@@ -47,21 +47,28 @@
             text-align: center; padding: 2rem;
         }
         .setup-box { background: var(--paper); padding: 3rem; border-radius: 20px; box-shadow: 0 20px 40px var(--shadow); max-width: 500px; width: 100%; }
-        .setup-box h1 { margin-top: 0; font-size: 2.5rem; color: var(--text-main); }
+        .setup-box h1 { margin-top: 0; font-size: 2.5rem; color: var(--text-main); margin-bottom: 2rem;}
         
         .setup-section { margin-bottom: 2rem; text-align: left;}
-        .setup-section label { display: block; font-weight: bold; margin-bottom: 1rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px;}
+        .setup-section label { display: block; font-weight: bold; margin-bottom: 1rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;}
         
         .lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .choice-btn {
             background: var(--bg); border: 2px solid rgba(0,0,0,0.1); padding: 1.5rem 1rem; border-radius: 12px;
-            font-size: 1.1rem; font-weight: bold; color: var(--text-main); cursor: pointer; transition: 0.2s;
-            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            font-weight: bold; color: var(--text-main); cursor: pointer; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
         }
         .choice-btn:hover { border-color: #3b82f6; transform: translateY(-2px); }
-        .choice-btn.selected { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #3b82f6; }
+        .choice-btn.selected { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #3b82f6; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2); }
         
-        .start-btn { width: 100%; background: #10b981; color: white; border: none; padding: 1.2rem; border-radius: 12px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .int-btn {
+            background: var(--bg); border: 2px solid rgba(0,0,0,0.1); padding: 1rem; border-radius: 12px;
+            font-size: 1.1rem; font-weight: bold; color: var(--text-main); cursor: pointer; transition: 0.2s;
+        }
+        .int-btn:hover { border-color: #3b82f6; }
+        .int-btn.selected { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #3b82f6; }
+
+        .start-btn { width: 100%; background: #10b981; color: white; border: none; padding: 1.2rem; border-radius: 12px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 1rem; }
         .start-btn:hover { background: #059669; }
 
         /* --- MAIN APP VIEWS --- */
@@ -75,7 +82,7 @@
 
         .top-nav { position: absolute; top: 20px; right: 20px; left: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
         
-        .settings-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; backdrop-filter: blur(5px); }
+        .settings-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; backdrop-filter: blur(5px); transition: 0.2s;}
         .settings-btn:hover { background: rgba(255,255,255,0.3); }
 
         .theme-switch { display: inline-block; height: 30px; position: relative; width: 54px; }
@@ -166,16 +173,16 @@
         <h1 id="ui-setup-title">Language Practice</h1>
         
         <div class="setup-section">
-            <label id="ui-setup-target">I want to learn:</label>
-            <div class="lang-grid" id="target-lang-grid"></div>
+            <label id="ui-setup-interface">Interface Language / Arayüz Dili:</label>
+            <div class="lang-grid">
+                <button class="int-btn" id="btn-int-en" onclick="selectInterface('en')">🇬🇧 English</button>
+                <button class="int-btn" id="btn-int-tr" onclick="selectInterface('tr')">🇹🇷 Türkçe</button>
+            </div>
         </div>
 
         <div class="setup-section">
-            <label id="ui-setup-interface">Interface Language:</label>
-            <div class="lang-grid">
-                <button class="choice-btn" id="btn-int-en" onclick="selectInterface('en')">🇬🇧 English</button>
-                <button class="choice-btn" id="btn-int-tr" onclick="selectInterface('tr')">🇹🇷 Türkçe</button>
-            </div>
+            <label id="ui-setup-target">I want to learn:</label>
+            <div class="lang-grid" id="target-lang-grid"></div>
         </div>
 
         <button class="start-btn" id="ui-setup-start" onclick="startApp()">Start Learning</button>
@@ -214,18 +221,21 @@
             <div class="pronunciation" id="special-p">...</div>
             <div class="meaning" id="special-m">...</div>
         </div>
+
         <div class="card card-word">
             <div class="label" id="ui-lbl-word">Word of the Day</div>
             <h2 class="target-text" id="word-t">...</h2>
             <div class="pronunciation" id="word-p">...</div>
             <div class="meaning" id="word-m">...</div>
         </div>
+
         <div class="card card-idiom">
             <div class="label" id="ui-lbl-idiom">Idiom of the Day</div>
             <h2 class="target-text" id="idiom-t">...</h2>
             <div class="pronunciation" id="idiom-p">...</div>
             <div class="meaning" id="idiom-m">...</div>
         </div>
+
         <div class="card card-proverb">
             <div class="label" id="ui-lbl-proverb">Proverb of the Day</div>
             <h2 class="target-text" id="proverb-t">...</h2>
@@ -238,14 +248,18 @@
                 <div class="score-correct">✔ <span id="score-correct">0</span></div>
                 <div class="score-wrong">✖ <span id="score-wrong">0</span></div>
             </div>
+            
             <div class="label" style="justify-content: center;" id="ui-lbl-challenge">Knowledge Check</div>
             <div class="quiz-question" id="ui-quiz-q">What does this word mean?</div>
+            
             <div class="quiz-word-box">
                 <div class="quiz-word" id="quiz-question"></div>
                 <div class="quiz-pron" id="quiz-pronunciation"></div>
             </div>
+            
             <div class="quiz-grid" id="quiz-options"></div>
             <div id="quiz-feedback" style="margin-top:1.5rem; font-weight:800; min-height:1.5em; color:var(--text-main);"></div>
+            
             <button class="next-btn" id="next-btn" onclick="setupQuiz()"></button>
         </div>
     </div>
@@ -269,22 +283,52 @@
 
 <script>
     /* =========================================================================
-       1. CONFIGURATION
+       1. CONFIGURATION (Logos and Patterns updated)
     ========================================================================= */
     const CONFIG = {
         fr: { 
-            id: 'fr', name: { en: "French", tr: "Fransızca" }, colors: { primary: "#0055A4", dark: "#003d7a", accent: "#FFD700", danger: "#EF4135" }, 
-            logoSVG: `<svg viewBox="0 0 100 100" fill="currentColor"><path d="M50 10 C35 30 35 45 45 55 L55 55 C65 45 65 30 50 10 Z"/><path d="M40 45 C15 45 10 60 20 75 C30 65 35 55 45 55 Z"/><path d="M60 45 C85 45 90 60 80 75 C70 65 65 55 55 55 Z"/><path d="M45 60 L55 60 L65 85 L35 85 Z"/><rect x="30" y="55" width="40" height="6" rx="2"/></svg>`,
-            bgPattern: `url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 10 C35 30 35 45 45 55 L55 55 C65 45 65 30 50 10 Z M40 45 C15 45 10 60 20 75 C30 65 35 55 45 55 Z M60 45 C85 45 90 60 80 75 C70 65 65 55 55 55 Z M45 60 L55 60 L65 85 L35 85 Z M30 55 h40 v6 h-40 z' fill='%23888' fill-opacity='0.05'/%3E%3C/svg%3E")`
+            id: 'fr', 
+            name: { en: "French", tr: "Fransızca" }, 
+            colors: { primary: "#002654", dark: "#001a3d", accent: "#ED2939", danger: "#EF4135" }, 
+            logoSVG: `
+                <svg viewBox="0 0 100 100" fill="currentColor">
+                    <path d="M50 10 Q 40 30, 44 52 Q 50 56, 56 52 Q 60 30, 50 10 Z"/>
+                    <path d="M 43 45 C 20 40, 10 55, 12 65 C 25 55, 38 55, 39 55 C 39 50, 41 47, 43 45 Z"/>
+                    <path d="M 57 45 C 80 40, 90 55, 88 65 C 75 55, 62 55, 61 55 C 61 50, 59 47, 57 45 Z"/>
+                    <path d="M 46 62 L 36 85 Q 50 92, 64 85 L 54 62 Z"/>
+                    <rect x="36" y="56" width="28" height="5" rx="2"/>
+                </svg>
+            `,
+            bgPattern: `url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 10 Q 40 30, 44 52 Q 50 56, 56 52 Q 60 30, 50 10 Z M 43 45 C 20 40, 10 55, 12 65 C 25 55, 38 55, 39 55 C 39 50, 41 47, 43 45 Z M 57 45 C 80 40, 90 55, 88 65 C 75 55, 62 55, 61 55 C 61 50, 59 47, 57 45 Z M 46 62 L 36 85 Q 50 92, 64 85 L 54 62 Z M 36 56 h28 v5 h-28 z' fill='%23888' fill-opacity='0.05'/%3E%3C/svg%3E")`
         },
         mn: { 
-            id: 'mn', name: { en: "Mongolian", tr: "Moğolca" }, colors: { primary: "#0066B3", dark: "#004d88", accent: "#FFD900", danger: "#DA2032" }, 
-            logoSVG: `<svg viewBox="0 0 100 200" fill="currentColor"><path d="M50 10 L65 30 L35 30 Z"/><circle cx="50" cy="45" r="10"/><path d="M40 65 Q50 75 60 65 Q50 55 40 65"/><rect x="35" y="75" width="30" height="5"/><rect x="25" y="85" width="50" height="5"/><circle cx="50" cy="110" r="15" fill="none" stroke="currentColor" stroke-width="4"/><path d="M50 95 A 15 15 0 0 1 50 125 A 7.5 7.5 0 0 0 50 110 A 7.5 7.5 0 0 1 50 95"/><rect x="25" y="135" width="50" height="5"/><rect x="35" y="145" width="30" height="5"/><rect x="15" y="75" width="5" height="75"/><rect x="80" y="75" width="5" height="75"/></svg>`,
+            id: 'mn', 
+            name: { en: "Mongolian", tr: "Moğolca" }, 
+            colors: { primary: "#0082C8", dark: "#00558a", accent: "#FFD900", danger: "#DA2032" }, 
+            logoSVG: `
+                <svg viewBox="0 0 100 200" fill="currentColor">
+                    <path d="M50 10 L65 30 L35 30 Z"/><circle cx="50" cy="45" r="10"/><path d="M40 65 Q50 75 60 65 Q50 55 40 65"/>
+                    <rect x="35" y="75" width="30" height="5"/><rect x="25" y="85" width="50" height="5"/>
+                    <circle cx="50" cy="110" r="15" fill="none" stroke="currentColor" stroke-width="4"/>
+                    <path d="M50 95 A 15 15 0 0 1 50 125 A 7.5 7.5 0 0 0 50 110 A 7.5 7.5 0 0 1 50 95"/>
+                    <rect x="25" y="135" width="50" height="5"/><rect x="35" y="145" width="30" height="5"/>
+                    <rect x="15" y="75" width="5" height="75"/><rect x="80" y="75" width="5" height="75"/>
+                </svg>
+            `,
             bgPattern: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0l20 20-20 20L0 20z' fill='%23888' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E")`
         },
         tr: { 
-            id: 'tr', name: { en: "Turkish", tr: "Türkçe" }, colors: { primary: "#c0392b", dark: "#922b21", accent: "#1abc9c", danger: "#2980b9" }, 
-            logoSVG: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#1e3a8a" stroke="rgba(255,255,255,0.4)" stroke-width="4"/><circle cx="50" cy="50" r="30" fill="#f8fafc"/><circle cx="50" cy="50" r="18" fill="#60a5fa"/><circle cx="50" cy="50" r="8" fill="#0f172a"/></svg>`,
+            id: 'tr', 
+            name: { en: "Turkish", tr: "Türkçe" }, 
+            colors: { primary: "#c0392b", dark: "#922b21", accent: "#1abc9c", danger: "#2980b9" }, 
+            logoSVG: `
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#1e3a8a" stroke="rgba(255,255,255,0.4)" stroke-width="4"/>
+                    <circle cx="50" cy="50" r="30" fill="#f8fafc"/>
+                    <circle cx="50" cy="50" r="18" fill="#60a5fa"/>
+                    <circle cx="50" cy="50" r="8" fill="#0f172a"/>
+                </svg>
+            `,
             bgPattern: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23888' stroke-width='1.5' stroke-opacity='0.08'%3E%3Cpath d='M30 0 L60 30 L30 60 L0 30 Z'/%3E%3Cpath d='M15 15 L45 45 M15 45 L45 15'/%3E%3C/g%3E%3C/svg%3E")`
         }
     };
@@ -309,7 +353,7 @@
     };
 
     /* =========================================================================
-       2. DATABASE (100 Words, 25 Idioms, 25 Proverbs for EACH language)
+       2. DATABASE
     ========================================================================= */
     const DB = {
         fr: {
@@ -460,7 +504,7 @@
                 {t:"Гар цайлгах", p:"Gar tsailgakh", en:"To give a tip/gift. (Lit: To make hands white)", tr:"Hediye/bahşiş vermek. (Kelime: Elleri beyazlatmak)"},
                 {t:"Салхи оруулах", p:"Salkhi oruulakh", en:"To get fresh air. (Lit: To let wind enter)", tr:"Hava almak. (Kelime: Rüzgar sokmak)"},
                 {t:"Нүдэн дээр", p:"Nüden deer", en:"In plain sight. (Lit: On the eyes)", tr:"Göz önünde, alenen. (Kelime: Gözlerin üzerinde)"},
-                {t:"Санаа алдах", p:"Sanaa aldakh", en:"To sigh out of relief/sadness. (Lit: To lose thought)", tr:"İç çekmek. (Kelime: Düşünceyi kaybetмек)"},
+                {t:"Санаа алдах", p:"Sanaa aldakh", en:"To sigh out of relief/sadness. (Lit: To lose thought)", tr:"İç çekmek. (Kelime: Düşünceyi kaybetmek)"},
                 {t:"Хөл хөнгөн", p:"Khöl khöngön", en:"Agile / Having an easy pregnancy. (Lit: Light feet)", tr:"Çevik / Hamileliği rahat geçiren. (Kelime: Hafif ayaklar)"},
                 {t:"Ам алдах", p:"Am aldakh", en:"To reveal a secret accidentally. (Lit: To lose mouth)", tr:"Ağzından kaçırmak. (Kelime: Ağzı kaybetmek)"},
                 {t:"Нүүр хагарах", p:"Nüür khagarakh", en:"To lose shyness. (Lit: Face breaking)", tr:"Yüzsüzleşmek, çekingenliği atmak. (Kelime: Yüzün kırılması)"},
@@ -636,8 +680,8 @@
        3. STATE MANAGEMENT
     ========================================================================= */
     let state = {
-        target: null, // 'fr', 'mn', 'tr'
-        interface: 'en', // 'en', 'tr'
+        target: null,
+        interface: 'en',
         theme: 'light',
         date: new Date(),
         calDate: new Date(),
@@ -678,8 +722,7 @@
         for (const [key, lang] of Object.entries(CONFIG)) {
             const btn = document.createElement('button');
             btn.className = `choice-btn ${state.target === key ? 'selected' : ''}`;
-            // Inject Custom SVG Logo into buttons
-            btn.innerHTML = `<div style="height:45px; display:flex; justify-content:center; align-items:center; margin-bottom:5px; color:${lang.colors.primary}">${lang.logoSVG}</div> ${lang.name[state.interface]}`;
+            btn.innerHTML = `<div style="height:50px; width:100%; display:flex; justify-content:center; align-items:center; color:${lang.colors.primary}">${lang.logoSVG}</div> <span style="font-size:1.15rem;">${lang.name[state.interface]}</span>`;
             btn.onclick = () => {
                 state.target = key;
                 buildTargetGrid(); 
