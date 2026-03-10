@@ -131,6 +131,15 @@
         .card-proverb { grid-column: span 12; border-top-color: var(--danger); }
         .card-proverb .label { color: var(--danger); }
 
+        
+        .card-grammar { grid-column: span 12; border-top-color: #f59e0b; background: linear-gradient(to right, var(--paper), rgba(0,0,0,0.02)); }
+        .card-grammar .label { color: #f59e0b; }
+        .grammar-practice { padding-top: 1rem; border-top: 1px solid var(--shadow); }
+        .grammar-btn { background: var(--bg); border: 2px solid rgba(0,0,0,0.1); padding: 0.8rem; border-radius: 8px; font-size: 1rem; font-weight: 600; color: var(--text-main); cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; width: 100%; text-align: left;}
+        .grammar-btn:hover:not([disabled]) { border-color: var(--primary); background: rgba(0,0,0,0.02);}
+        .grammar-btn.correct { background: rgba(16, 185, 129, 0.1); border-color: var(--correct); color: var(--correct); }
+        .grammar-btn.wrong { background: rgba(239, 68, 68, 0.1); border-color: var(--wrong); color: var(--wrong); opacity: 0.6; }
+
         /* --- QUIZ --- */
         .quiz-container { grid-column: span 12; background: var(--paper); padding: 2.5rem; border-radius: 16px; text-align: center; box-shadow: 0 4px 10px var(--shadow); margin-top: 1rem; }
         .score-board { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1.5rem; font-weight: bold; font-size: 1.2rem; }
@@ -151,7 +160,10 @@
         .next-btn { margin-top: 2rem; background: var(--primary); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: none; transition: background 0.2s; }
         .next-btn:hover { background: var(--primary-dark); }
 
-        /* --- CALENDAR MODAL --- */
+        
+
+
+    /* --- CALENDAR MODAL --- */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(3px); }
         .modal { background: var(--paper); padding: 2rem; border-radius: 16px; width: 90%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); text-align: center; }
         .modal h3 { margin-top: 0; color: var(--text-main); }
@@ -247,6 +259,20 @@
             <div class="meaning" id="proverb-m">...</div>
         </div>
 
+        
+        <div class="card card-grammar">
+            <div class="label" id="ui-lbl-grammar">Daily Grammar</div>
+            <h2 class="target-text" id="grammar-title" style="font-size: 1.5rem;">...</h2>
+            <div class="meaning" id="grammar-exp">...</div>
+            <div class="example" id="grammar-ex" style="margin-top: 1rem; padding: 1rem; background: rgba(0,0,0,0.05); border-radius: 8px; font-style: italic;">...</div>
+            
+            <div class="grammar-practice" style="margin-top: 1.5rem;">
+                <h4 id="grammar-q" style="margin-bottom: 0.5rem; color: var(--text-main);">...</h4>
+                <div class="quiz-grid" id="grammar-options" style="display:flex; flex-direction:column; gap:0.5rem; margin-top:0;"></div>
+                <div id="grammar-feedback" style="margin-top:1rem; font-weight:bold; min-height:1.5em; color:var(--text-main);"></div>
+            </div>
+        </div>
+
         <div class="quiz-container">
             <div class="score-board">
                 <div class="score-correct">✔ <span id="score-correct">0</span></div>
@@ -286,6 +312,71 @@
        1. CONFIGURATION
     ========================================================================= */
     const CONFIG = {
+
+        es: { 
+            id: 'es', 
+            name: { en: "Spanish", tr: "İspanyolca" }, 
+            colors: { primary: "#c62828", primaryDark: "#ef5350", dark: "#8e0000", accent: "#fbc02d", danger: "#1565c0" }, 
+            logoSVG: `
+                <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4">
+                    <path d="M15,80 A35,35 0 0,1 85,80 Z" fill="#c62828" stroke="none"/>
+                    <line x1="50" y1="80" x2="20" y2="50" stroke="#fbc02d" stroke-width="3"/>
+                    <line x1="50" y1="80" x2="32" y2="40" stroke="#fbc02d" stroke-width="3"/>
+                    <line x1="50" y1="80" x2="50" y2="35" stroke="#fbc02d" stroke-width="3"/>
+                    <line x1="50" y1="80" x2="68" y2="40" stroke="#fbc02d" stroke-width="3"/>
+                    <line x1="50" y1="80" x2="80" y2="50" stroke="#fbc02d" stroke-width="3"/>
+                    <circle cx="50" cy="80" r="5" fill="#fbc02d" stroke="none"/>
+                </svg>`, 
+            bgPattern: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0 L40 20 L20 40 L0 20 Z' fill='none' stroke='%23888' stroke-width='1' stroke-opacity='0.08'/%3E%3Ccircle cx='20' cy='20' r='4' fill='none' stroke='%23888' stroke-width='1' stroke-opacity='0.08'/%3E%3C/svg%3E")` 
+        },
+        de: { 
+            id: 'de', 
+            name: { en: "German", tr: "Almanca" }, 
+            colors: { primary: "#212121", primaryDark: "#757575", dark: "#000000", accent: "#ffeb3b", danger: "#d32f2f" }, 
+            logoSVG: `
+                <svg viewBox="0 0 100 100" fill="currentColor">
+                    <rect x="25" y="70" width="50" height="15" />
+                    <rect x="35" y="30" width="30" height="40" />
+                    <polygon points="30,30 50,10 70,30" />
+                    <rect x="25" y="45" width="10" height="25" />
+                    <polygon points="25,45 30,35 35,45" />
+                    <rect x="65" y="45" width="10" height="25" />
+                    <polygon points="65,45 70,35 75,45" />
+                </svg>`, 
+            bgPattern: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 10 L50 20 L50 40 L30 50 L10 40 L10 20 Z' fill='none' stroke='%23888' stroke-width='1.5' stroke-opacity='0.08'/%3E%3Cpath d='M30 10 L30 30 M10 20 L30 30 M50 20 L30 30 M30 30 L30 50 M10 40 L30 30 M50 40 L30 30' fill='none' stroke='%23888' stroke-width='1.5' stroke-opacity='0.04'/%3E%3C/svg%3E")` 
+        },
+        it: { 
+            id: 'it', 
+            name: { en: "Italian", tr: "İtalyanca" }, 
+            colors: { primary: "#2e7d32", primaryDark: "#66bb6a", dark: "#005005", accent: "#c62828", danger: "#1565c0" }, 
+            logoSVG: `
+                <svg viewBox="0 0 100 100" fill="currentColor">
+                    <rect x="15" y="80" width="70" height="10" />
+                    <rect x="20" y="70" width="60" height="10" />
+                    <rect x="30" y="25" width="10" height="45" />
+                    <rect x="45" y="25" width="10" height="45" />
+                    <rect x="60" y="25" width="10" height="45" />
+                    <rect x="20" y="15" width="60" height="10" />
+                    <rect x="15" y="5" width="70" height="10" />
+                </svg>`, 
+            bgPattern: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20 Q10 10 20 20 T40 20' fill='none' stroke='%23888' stroke-width='1.5' stroke-opacity='0.08'/%3E%3Cpath d='M0 30 Q10 20 20 30 T40 30' fill='none' stroke='%23888' stroke-width='1.5' stroke-opacity='0.08'/%3E%3C/svg%3E")` 
+        },
+        pt: { 
+            id: 'pt', 
+            name: { en: "Portuguese", tr: "Portekizce" }, 
+            colors: { primary: "#1565c0", primaryDark: "#42a5f5", dark: "#003c8f", accent: "#2e7d32", danger: "#c62828" }, 
+            logoSVG: `
+                <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="4">
+                    <circle cx="50" cy="50" r="35" />
+                    <ellipse cx="50" cy="50" rx="35" ry="12" transform="rotate(30 50 50)" />
+                    <ellipse cx="50" cy="50" rx="12" ry="35" transform="rotate(30 50 50)" />
+                    <line x1="15" y1="50" x2="85" y2="50" />
+                    <line x1="50" y1="15" x2="50" y2="85" />
+                    <circle cx="50" cy="50" r="6" fill="currentColor" />
+                </svg>`, 
+            bgPattern: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0 L60 30 L30 60 L0 30 Z' fill='none' stroke='%23888' stroke-width='1' stroke-opacity='0.1'/%3E%3Cpath d='M15 15 L45 15 L45 45 L15 45 Z' fill='none' stroke='%23888' stroke-width='1' stroke-opacity='0.1'/%3E%3Ccircle cx='30' cy='30' r='4' fill='%23888' fill-opacity='0.1'/%3E%3C/svg%3E")` 
+        },
+
         fr: { 
             id: 'fr', 
             name: { en: "French", tr: "Fransızca" }, 
@@ -336,7 +427,7 @@
         en: {
             setupTitle: "Language Practice", setupTarget: "I want to learn:", setupInt: "Interface Language:", setupStart: "Start Learning",
             navSettings: "⚙ Settings", headerSub: "Daily Words, Idioms & Proverbs", headerStreak: "Day Streak",
-            lblSpecial: "Cultural Feature", lblWord: "Word of the Day", lblIdiom: "Idiom of the Day", lblProverb: "Proverb of the Day", lblChallenge: "Knowledge Check",
+            lblSpecial: "Cultural Feature", lblWord: "Word of the Day", lblIdiom: "Idiom of the Day", lblProverb: "Proverb of the Day", lblGrammar: "Daily Grammar", lblChallenge: "Knowledge Check",
             quizQ: "What does this mean?", nextBtn: "Next Question ➔", correct: "Correct! 🎉", wrong: "Incorrect. The answer is:",
             today: "Today", calTitle: "Activity Calendar", calPracticed: "Practiced", calClose: "Close",
             days: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'], months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -344,7 +435,7 @@
         tr: {
             setupTitle: "Dil Pratiği", setupTarget: "Öğrenmek İstediğim Dil:", setupInt: "Arayüz Dili:", setupStart: "Öğrenmeye Başla",
             navSettings: "⚙ Ayarlar", headerSub: "Günlük Kelimeler, Deyimler ve Atasözleri", headerStreak: "Gün Serisi",
-            lblSpecial: "Ayın Kültürel Kelimesi", lblWord: "Günün Kelimesi", lblIdiom: "Günün Deyimi", lblProverb: "Günün Atasözü", lblChallenge: "Kendini Dene",
+            lblSpecial: "Ayın Kültürel Kelimesi", lblWord: "Günün Kelimesi", lblIdiom: "Günün Deyimi", lblProverb: "Günün Atasözü", lblGrammar: "Günün Dilbilgisi", lblChallenge: "Kendini Dene",
             quizQ: "Bunun anlamı nedir?", nextBtn: "Sıradaki Soru ➔", correct: "Doğru! 🎉", wrong: "Yanlış. Doğru cevap:",
             today: "Bugün", calTitle: "Aktivite Takvimi", calPracticed: "Çalışıldı", calClose: "Kapat",
             days: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'], months: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
@@ -355,6 +446,600 @@
        2. DATABASE
     ========================================================================= */
     const DB = {
+
+        es: {
+            words: [
+                {t:"Hola", p:"O-la", en:"Hello", tr:"Merhaba"}, {t:"Adiós", p:"A-diyos", en:"Goodbye", tr:"Hoşçakal"},
+                {t:"Gracias", p:"Gra-siyas", en:"Thank you", tr:"Teşekkürler"}, {t:"Por favor", p:"Por fa-vor", en:"Please", tr:"Lütfen"},
+                {t:"Sí", p:"Si", en:"Yes", tr:"Evet"}, {t:"No", p:"No", en:"No", tr:"Hayır"},
+                {t:"Agua", p:"A-gua", en:"Water", tr:"Su"}, {t:"Pan", p:"Pan", en:"Bread", tr:"Ekmek"},
+                {t:"Amigo", p:"A-mi-go", en:"Friend", tr:"Arkadaş"}, {t:"Familia", p:"Fa-mil-ya", en:"Family", tr:"Aile"},
+                {t:"Tiempo", p:"Tiyem-po", en:"Time", tr:"Zaman"}, {t:"Día", p:"Di-ya", en:"Day", tr:"Gün"},
+                {t:"Noche", p:"No-çe", en:"Night", tr:"Gece"}, {t:"Sol", p:"Sol", en:"Sun", tr:"Güneş"},
+                {t:"Luna", p:"Lu-na", en:"Moon", tr:"Ay"}, {t:"Casa", p:"Ka-sa", en:"House", tr:"Ev"},
+                {t:"Gato", p:"Ga-to", en:"Cat", tr:"Kedi"}, {t:"Perro", p:"Pe-ro", en:"Dog", tr:"Köpek"},
+                {t:"Mujer", p:"Mu-her", en:"Woman", tr:"Kadın"}, {t:"Hombre", p:"Om-bre", en:"Man", tr:"Adam"},
+                {t:"Niño", p:"Nin-yo", en:"Child/Boy", tr:"Çocuk/Erkek çocuk"}, {t:"Niña", p:"Nin-ya", en:"Girl", tr:"Kız çocuk"},
+                {t:"Libro", p:"Lib-ro", en:"Book", tr:"Kitap"}, {t:"Mesa", p:"Me-sa", en:"Table", tr:"Masa"},
+                {t:"Silla", p:"Si-ya", en:"Chair", tr:"Sandalye"}, {t:"Puerta", p:"Puer-ta", en:"Door", tr:"Kapı"},
+                {t:"Ventana", p:"Ven-ta-na", en:"Window", tr:"Pencere"}, {t:"Coche", p:"Ko-çe", en:"Car", tr:"Araba"},
+                {t:"Calle", p:"Ka-ye", en:"Street", tr:"Sokak"}, {t:"Ciudad", p:"Siyu-dad", en:"City", tr:"Şehir"},
+                {t:"País", p:"Pa-is", en:"Country", tr:"Ülke"}, {t:"Mundo", p:"Mun-do", en:"World", tr:"Dünya"},
+                {t:"Escuela", p:"Es-kue-la", en:"School", tr:"Okul"}, {t:"Trabajo", p:"Tra-ba-ho", en:"Work", tr:"İş"},
+                {t:"Dinero", p:"Di-ne-ro", en:"Money", tr:"Para"}, {t:"Comida", p:"Ko-mi-da", en:"Food", tr:"Yemek"},
+                {t:"Carne", p:"Kar-ne", en:"Meat", tr:"Et"}, {t:"Pescado", p:"Pes-ka-do", en:"Fish", tr:"Balık"},
+                {t:"Fruta", p:"Fru-ta", en:"Fruit", tr:"Meyve"}, {t:"Verdura", p:"Ver-du-ra", en:"Vegetable", tr:"Sebze"},
+                {t:"Rojo", p:"Ro-ho", en:"Red", tr:"Kırmızı"}, {t:"Azul", p:"A-zul", en:"Blue", tr:"Mavi"},
+                {t:"Verde", p:"Ver-de", en:"Green", tr:"Yeşil"}, {t:"Amarillo", p:"A-ma-ri-yo", en:"Yellow", tr:"Sarı"},
+                {t:"Blanco", p:"Blan-ko", en:"White", tr:"Beyaz"}, {t:"Negro", p:"Neg-ro", en:"Black", tr:"Siyah"},
+                {t:"Grande", p:"Gran-de", en:"Big", tr:"Büyük"}, {t:"Pequeño", p:"Pe-ken-yo", en:"Small", tr:"Küçük"},
+                {t:"Bueno", p:"Bue-no", en:"Good", tr:"İyi"}, {t:"Malo", p:"Ma-lo", en:"Bad", tr:"Kötü"},
+                {t:"Feliz", p:"Fe-lis", en:"Happy", tr:"Mutlu"}, {t:"Triste", p:"Tris-te", en:"Sad", tr:"Üzgün"},
+                {t:"Cansado", p:"Kan-sa-do", en:"Tired", tr:"Yorgun"}, {t:"Enfermo", p:"En-fer-mo", en:"Sick", tr:"Hasta"},
+                {t:"Caliente", p:"Ka-liyen-te", en:"Hot", tr:"Sıcak"}, {t:"Frío", p:"Fri-o", en:"Cold", tr:"Soğuk"},
+                {t:"Nuevo", p:"Nue-vo", en:"New", tr:"Yeni"}, {t:"Viejo", p:"Viye-ho", en:"Old", tr:"Eski"},
+                {t:"Joven", p:"Ho-ven", en:"Young", tr:"Genç"}, {t:"Rápido", p:"Ra-pi-do", en:"Fast", tr:"Hızlı"},
+                {t:"Lento", p:"Len-to", en:"Slow", tr:"Yavaş"}, {t:"Difícil", p:"Di-fi-sil", en:"Difficult", tr:"Zor"},
+                {t:"Fácil", p:"Fa-sil", en:"Easy", tr:"Kolay"}, {t:"Verdad", p:"Ver-dad", en:"Truth", tr:"Gerçek"},
+                {t:"Mentira", p:"Men-ti-ra", en:"Lie", tr:"Yalan"}, {t:"Hoy", p:"Oy", en:"Today", tr:"Bugün"},
+                {t:"Mañana", p:"Man-ya-na", en:"Tomorrow/Morning", tr:"Yarın/Sabah"}, {t:"Ayer", p:"A-yer", en:"Yesterday", tr:"Dün"},
+                {t:"Semana", p:"Se-ma-na", en:"Week", tr:"Hafta"}, {t:"Mes", p:"Mes", en:"Month", tr:"Ay"},
+                {t:"Año", p:"An-yo", en:"Year", tr:"Yıl"}, {t:"Hora", p:"O-ra", en:"Hour", tr:"Saat"},
+                {t:"Lunes", p:"Lu-nes", en:"Monday", tr:"Pazartesi"}, {t:"Martes", p:"Mar-tes", en:"Tuesday", tr:"Salı"},
+                {t:"Miércoles", p:"Miyer-ko-les", en:"Wednesday", tr:"Çarşamba"}, {t:"Jueves", p:"Hue-ves", en:"Thursday", tr:"Perşembe"},
+                {t:"Viernes", p:"Viyer-nes", en:"Friday", tr:"Cuma"}, {t:"Sábado", p:"Sa-ba-do", en:"Saturday", tr:"Cumartesi"},
+                {t:"Domingo", p:"Do-min-go", en:"Sunday", tr:"Pazar"}, {t:"Uno", p:"U-no", en:"One", tr:"Bir"},
+                {t:"Dos", p:"Dos", en:"Two", tr:"İki"}, {t:"Tres", p:"Tres", en:"Three", tr:"Üç"},
+                {t:"Cuatro", p:"Kuat-ro", en:"Four", tr:"Dört"}, {t:"Cinco", p:"Sin-ko", en:"Five", tr:"Beş"},
+                {t:"Seis", p:"Seis", en:"Six", tr:"Altı"}, {t:"Siete", p:"Siye-te", en:"Seven", tr:"Yedi"},
+                {t:"Ocho", p:"O-ço", en:"Eight", tr:"Sekiz"}, {t:"Nueve", p:"Nue-ve", en:"Nine", tr:"Dokuz"},
+                {t:"Diez", p:"Diyes", en:"Ten", tr:"On"}, {t:"Madre", p:"Mad-re", en:"Mother", tr:"Anne"},
+                {t:"Padre", p:"Pad-re", en:"Father", tr:"Baba"}, {t:"Hermano", p:"Er-ma-no", en:"Brother", tr:"Erkek kardeş"},
+                {t:"Hermana", p:"Er-ma-na", en:"Sister", tr:"Kız kardeş"}, {t:"Mano", p:"Ma-no", en:"Hand", tr:"El"},
+                {t:"Pie", p:"Piye", en:"Foot", tr:"Ayak"}, {t:"Ojo", p:"O-ho", en:"Eye", tr:"Göz"},
+                {t:"Boca", p:"Bo-ka", en:"Mouth", tr:"Ağız"}, {t:"Cabeza", p:"Ka-be-sa", en:"Head", tr:"Baş"},
+                {t:"Corazón", p:"Ko-ra-son", en:"Heart", tr:"Kalp"}, {t:"Amor", p:"A-mor", en:"Love", tr:"Aşk"}
+            ],
+            idioms: [
+                {t:"Tomar el pelo", p:"To-mar el pe-lo", en:"To pull someone's leg (Lit: to take the hair)", tr:"Biriyle dalga geçmek. (Kelime: Saçını almak)"},
+                {t:"Estar en las nubes", p:"Es-tar en las nu-bes", en:"To be daydreaming (Lit: to be in the clouds)", tr:"Dalgın olmak. (Kelime: Bulutlarda olmak)"},
+                {t:"Tirar la casa por la ventana", p:"Ti-rar la ka-sa por la ven-ta-na", en:"To spare no expense (Lit: throw house out window)", tr:"Parayı saçıp savurmak. (Kelime: Evi pencereden atmak)"},
+                {t:"Estar como una cabra", p:"Es-tar ko-mo u-na kab-ra", en:"To be crazy (Lit: to be like a goat)", tr:"Deli gibi olmak. (Kelime: Keçi gibi olmak)"},
+                {t:"Ahogarse en un vaso de agua", p:"A-o-gar-se en un va-so de a-gua", en:"To make a mountain out of a molehill (Lit: drown in glass of water)", tr:"Bir kaşık suda fırtına koparmak. (Kelime: Su bardağında boğulmak)"},
+                {t:"Dar en el clavo", p:"Dar en el kla-vo", en:"To hit the nail on the head.", tr:"Tam üstüne basmak, taşı gediğine koymak."},
+                {t:"Costar un ojo de la cara", p:"Kos-tar un o-ho de la ka-ra", en:"To cost an arm and a leg (Lit: to cost an eye from the face).", tr:"Ateş pahası olmak. (Kelime: Yüzden bir göze mal olmak)"},
+                {t:"Echar agua al mar", p:"E-çar a-gua al mar", en:"To do something pointless (Lit: to throw water to the sea).", tr:"Boşa kürek çekmek. (Kelime: Denize su atmak)"},
+                {t:"No tener pelos en la lengua", p:"No te-ner pe-los en la len-gua", en:"To speak one's mind (Lit: to not have hairs on the tongue).", tr:"Sözünü esirgememek, dobra olmak."},
+                {t:"Ponerse las pilas", p:"Po-ner-se las pi-las", en:"To get one's act together (Lit: to put in the batteries).", tr:"Harekete geçmek, toparlanmak. (Kelime: Pilleri takmak)"},
+                {t:"Ser pan comido", p:"Ser pan ko-mi-do", en:"To be a piece of cake (Lit: to be eaten bread).", tr:"Çocuk oyuncağı olmak. (Kelime: Yenmiş ekmek olmak)"},
+                {t:"Dar la lata", p:"Dar la la-ta", en:"To annoy or bother someone (Lit: to give the tin can).", tr:"Kafa ütülemek, can sıkmak. (Kelime: Teneke vermek)"},
+                {t:"Estar hecho polvo", p:"Es-tar e-ço pol-vo", en:"To be exhausted (Lit: to be made of dust).", tr:"Çok yorgun olmak, tükenmek. (Kelime: Toza dönüşmek)"},
+                {t:"Importar un pepino", p:"İm-por-tar un pe-pi-no", en:"To not care at all (Lit: to matter a cucumber).", tr:"Umurunda olmamak. (Kelime: Salatalık kadar önemsemek)"},
+                {t:"Echar una mano", p:"E-çar u-na ma-no", en:"To lend a hand.", tr:"El atmak, yardım etmek."},
+                {t:"Hablar por los codos", p:"Ab-lar por los ko-dos", en:"To talk a lot (Lit: to talk through the elbows).", tr:"Çok konuşmak. (Kelime: Dirseklerle konuşmak)"},
+                {t:"Meter la pata", p:"Me-ter la pa-ta", en:"To make a mistake (Lit: to put the paw in).", tr:"Pot kırmak, çam devirmek. (Kelime: Patisini sokmak)"},
+                {t:"Quedarse de piedra", p:"Ke-dar-se de piyed-ra", en:"To be stunned (Lit: to turn to stone).", tr:"Şoka girmek, taş kesilmek."},
+                {t:"Ser un aguafiestas", p:"Ser un a-gua-fiyes-tas", en:"To be a party pooper (Lit: water-parties).", tr:"Oyunbozan olmak, heves kırmak. (Kelime: Parti sulandıran)"},
+                {t:"Tener la negra", p:"Te-ner la neg-ra", en:"To have bad luck (Lit: to have the black).", tr:"Üzerinde kara bulutlar dolaşmak, çok şanssız olmak."},
+                {t:"Llover a cántaros", p:"Yo-ver a kan-ta-ros", en:"To rain heavily (Lit: to rain pitchers).", tr:"Bardaktan boşanırcasına yağmak."},
+                {t:"Ir al grano", p:"İr al gra-no", en:"To get straight to the point.", tr:"Sadede gelmek. (Kelime: Taneye gitmek)"},
+                {t:"Hacer la vista gorda", p:"A-ser la vis-ta gor-da", en:"To turn a blind eye (Lit: to make the fat view).", tr:"Görmezden gelmek."},
+                {t:"Estar frito", p:"Es-tar fri-to", en:"To be doomed or exhausted (Lit: to be fried).", tr:"Mahvolmak, bitik olmak. (Kelime: Kızarmış olmak)"},
+                {t:"Pasar la noche en blanco", p:"Pa-sar la no-çe en blan-ko", en:"To not sleep a wink (Lit: to pass the night in white).", tr:"Geceyi uykusuz geçirmek, gözünü kırpmamak."}
+            ],
+            proverbs: [
+                {t:"Más vale tarde que nunca", p:"Mas va-le tar-de ke nun-ka", en:"Better late than never.", tr:"Geç olsun güç olmasın."},
+                {t:"De tal palo, tal astilla", p:"De tal pa-lo, tal as-ti-ya", en:"Like father, like son. (Lit: From such stick, such splinter)", tr:"Armut dibine düşer. (Kelime: Hangi dal, o kıymık)"},
+                {t:"A caballo regalado no se le miran los dientes", p:"A ka-ba-yo re-ga-la-do...", en:"Don't look a gift horse in the mouth.", tr:"Beleş atın dişine bakılmaz."},
+                {t:"El mundo es un pañuelo", p:"El mun-do es un pan-yu-e-lo", en:"It's a small world. (Lit: The world is a handkerchief)", tr:"Dünya küçüktür. (Kelime: Dünya bir mendildir)"},
+                {t:"Ojos que no ven, corazón que no siente", p:"O-hos ke no ven...", en:"Out of sight, out of mind.", tr:"Gözden ırak olan gönülden de ırak olur."},
+                {t:"En boca cerrada no entran moscas", p:"En bo-ka se-ra-da...", en:"Silence is golden. (Lit: Flies don't enter a closed mouth)", tr:"Susmak bazen en iyisidir. (Kelime: Kapalı ağza sinek girmez)"},
+                {t:"Camarón que se duerme se lo lleva la corriente", p:"Ka-ma-ron ke se duer-me...", en:"You snooze, you lose. (Lit: Shrimp that sleeps is taken by the current)", tr:"Uyuyan balık tutamaz. (Kelime: Uyuyan karidesi akıntı götürür)"},
+                {t:"No es oro todo lo que reluce", p:"No es o-ro to-do lo ke re-lu-se", en:"All that glitters is not gold.", tr:"Parlayan her şey altın değildir."},
+                {t:"A quien madruga, Dios le ayuda", p:"A kiyen mad-ru-ga...", en:"The early bird catches the worm. (Lit: God helps him who rises early)", tr:"Erken kalkan yol alır. (Kelime: Erken kalkana Tanrı yardım eder)"},
+                {t:"Perro ladrador, poco mordedor", p:"Pe-ro lad-ra-dor...", en:"Barking dogs seldom bite.", tr:"Havlayan köpek ısırmaz."},
+                {t:"Cría cuervos y te sacarán los ojos", p:"Kri-ya kuer-vos y te sa-ka-ran...", en:"I taught you to swim and now you'd drown me. (Lit: Raise crows and they will gouge out your eyes)", tr:"Besle kargayı oysun gözünü."},
+                {t:"El hábito no hace al monje", p:"El a-bi-to no a-se al mon-he", en:"Clothes do not make the man. (Lit: The habit does not make the monk)", tr:"Görünüşe aldanmamak gerekir. (Kelime: Cüppe, keşiş yapmaz)"},
+                {t:"A las palabras se las lleva el viento", p:"A las pa-lab-ras...", en:"Actions speak louder than words. (Lit: Words are carried away by the wind)", tr:"Söz uçar, yazı kalır. (Kelime: Sözleri rüzgar götürür)"},
+                {t:"Dime con quién andas, y te diré quién eres", p:"Di-me kon kiyen an-das...", en:"A man is known by the company he keeps.", tr:"Bana arkadaşını söyle, sana kim olduğunu söyleyeyim."},
+                {t:"No hay mal que por bien no venga", p:"No ay mal ke por biyen...", en:"Every cloud has a silver lining. (Lit: There is no evil that doesn't bring good)", tr:"Her şerde bir hayır vardır."},
+                {t:"Más vale pájaro en mano que ciento volando", p:"Mas va-le pa-ha-ro...", en:"A bird in the hand is worth two in the bush.", tr:"Eldeki bir serçe daldaki iki kuştan iyidir. (Kelime: Eldeki bir kuş uçan yüzden iyidir)"},
+                {t:"Mucho ruido y pocas nueces", p:"Mu-ço rui-do y po-kas nue-ses", en:"Much ado about nothing. (Lit: Much noise and few walnuts)", tr:"Boş gürültü. (Kelime: Çok gürültü az ceviz)"},
+                {t:"Quien ríe el último, ríe mejor", p:"Kiyen ri-e el ul-ti-mo...", en:"He who laughs last, laughs best.", tr:"Son gülen iyi güler."},
+                {t:"Agua pasada no mueve molino", p:"A-gua pa-sa-da...", en:"Water under the bridge. (Lit: Past water doesn't move the mill)", tr:"Geçmişe mazi derler. (Kelime: Geçmiş su değirmeni döndürmez)"},
+                {t:"A mal tiempo, buena cara", p:"A mal tiyem-po...", en:"Keep a stiff upper lip. (Lit: To bad weather, a good face)", tr:"Zorluklar karşısında pes etmemek, güleryüz göstermek."},
+                {t:"Gato con guantes no caza ratones", p:"Ga-to kon guan-tes...", en:"A cat in gloves catches no mice. (Meaning: you need to get your hands dirty)", tr:"İş yapmak için rahat ve hazırlıklı olmalısın. (Kelime: Eldivenli kedi fare tutamaz)"},
+                {t:"Quien mucho abarca, poco aprieta", p:"Kiyen mu-ço a-bar-ka...", en:"Jack of all trades, master of none. (Lit: He who embraces much, squeezes little)", tr:"Aynı anda birçok işe kalkışan hiçbirini tam yapamaz."},
+                {t:"Barriga llena, corazón contento", p:"Ba-ri-ga ye-na...", en:"A full belly makes a happy heart.", tr:"Tok açın halinden anlamaz / Mide dolu olunca kalp mutlu olur."},
+                {t:"Del dicho al hecho hay mucho trecho", p:"Del di-ço al e-ço...", en:"Easier said than done. (Lit: From the saying to the fact there is a long way)", tr:"Söylemesi kolay, yapması zor. (Kelime: Sözden eyleme çok yol var)"},
+                {t:"Nunca llueve a gusto de todos", p:"Nun-ka yue-ve a gus-to...", en:"You can't please everyone. (Lit: It never rains to everyone's liking)", tr:"Herkesi memnun edemezsin. (Kelime: Asla herkesin zevkine göre yağmur yağmaz)"}
+            ],
+            specials: [
+                {t:"Siesta", p:"Si-yes-ta", en:"An afternoon nap.", tr:"Öğle uykusu."},
+                {t:"Fiesta", p:"Fi-yes-ta", en:"A party or festival.", tr:"Parti veya festival."},
+                {t:"Tapas", p:"Ta-pas", en:"Small Spanish savory dishes.", tr:"Küçük İspanyol mezeleri."},
+                {t:"Sobremesa", p:"Sob-re-me-sa", en:"Time spent relaxing after a meal.", tr:"Yemekten sonra masada sohbet ederek geçirilen zaman."},
+                {t:"Madrugada", p:"Mad-ru-ga-da", en:"The early hours of the morning.", tr:"Sabahın erken saatleri, şafak vakti."},
+                {t:"Flamenco", p:"Fla-men-ko", en:"Traditional Spanish art form based on music and dance.", tr:"Müzik ve dansa dayalı geleneksel İspanyol sanatı."},
+                {t:"Botellón", p:"Bo-te-yon", en:"Spanish custom where young people gather to drink outdoors.", tr:"Gençlerin dışarıda içki içip sosyalleştiği gelenek."},
+                {t:"Chiringuito", p:"Çi-rin-gi-to", en:"A small outdoor bar or kiosk, often on the beach.", tr:"Genellikle plajlarda bulunan küçük açık hava barı."},
+                {t:"Duende", p:"Duen-de", en:"A heightened state of emotion, expression and authenticity (often in Flamenco).", tr:"(Flamenko'da) derin duygu durumu, ilham perisi."},
+                {t:"Tapeo", p:"Ta-pe-o", en:"The action of going out for tapas.", tr:"Tapas yemek için dışarı çıkma eylemi."},
+                {t:"Gula", p:"Gu-la", en:"Desire to eat simply for the taste, not out of hunger.", tr:"Açlıktan değil sırf lezzetinden yemek yeme arzusu."},
+                {t:"Empalmar", p:"Em-pal-mar", en:"Staying awake all night and going straight into the next day.", tr:"Bütün gece uyanık kalıp ertesi güne doğrudan devam etmek."}
+            ],
+            grammar: [
+                {
+                    title: {en: "Gender of Nouns", tr: "İsimlerin Cinsiyeti"},
+                    exp: {en: "Nouns ending in '-o' are usually masculine, and '-a' are feminine.", tr: "'-o' ile biten kelimeler genellikle eril, '-a' ile bitenler dişildir."},
+                    ex: "El chico (The boy), La chica (The girl)",
+                    q: {en: "Is 'Gato' (Cat) masculine or feminine?", tr: "'Gato' (Kedi) eril midir dişil mi?"},
+                    options: ["Masculine (Eril)", "Feminine (Dişil)", "Both (İkisi de)", "None (Hiçbiri)"],
+                    ans: 0
+                },
+                {
+                    title: {en: "Plurals", tr: "Çoğullar (-s / -es)"},
+                    exp: {en: "Add '-s' if the word ends in a vowel, '-es' if it ends in a consonant.", tr: "Kelime ünlü ile bitiyorsa '-s', ünsüz ile bitiyorsa '-es' eklenir."},
+                    ex: "Casa -> Casas, Papel -> Papeles",
+                    q: {en: "What is the plural of 'Reloj' (Watch)?", tr: "'Reloj' (Saat) kelimesinin çoğulu nedir?"},
+                    options: ["Relojs", "Relojes", "Reloj", "Relojies"],
+                    ans: 1
+                },
+                {
+                    title: {en: "Ser vs Estar", tr: "Ser ve Estar (Olmak)"},
+                    exp: {en: "'Ser' is for permanent things (identity), 'Estar' is for temporary states (location, emotion).", tr: "'Ser' kalıcı şeyler (kimlik) için, 'Estar' geçici durumlar (yer, duygu) için kullanılır."},
+                    ex: "Soy alto (I am tall), Estoy cansado (I am tired)",
+                    q: {en: "Which verb do you use to say 'I am in Madrid'?", tr: "'Madrid'deyim' demek için hangi fiil kullanılır?"},
+                    options: ["Soy", "Estoy", "Tengo", "Voy"],
+                    ans: 1
+                }
+            ]
+        },
+        de: {
+            words: [
+                {t:"Hallo", p:"Ha-lo", en:"Hello", tr:"Merhaba"}, {t:"Tschüss", p:"Çüs", en:"Goodbye", tr:"Hoşçakal"},
+                {t:"Danke", p:"Dan-ke", en:"Thank you", tr:"Teşekkürler"}, {t:"Bitte", p:"Bi-te", en:"Please", tr:"Lütfen"},
+                {t:"Ja", p:"Ya", en:"Yes", tr:"Evet"}, {t:"Nein", p:"Nayn", en:"No", tr:"Hayır"},
+                {t:"Wasser", p:"Va-ser", en:"Water", tr:"Su"}, {t:"Brot", p:"Brot", en:"Bread", tr:"Ekmek"},
+                {t:"Freund", p:"Froynd", en:"Friend", tr:"Arkadaş"}, {t:"Familie", p:"Fa-mil-ye", en:"Family", tr:"Aile"},
+                {t:"Zeit", p:"Tsayt", en:"Time", tr:"Zaman"}, {t:"Tag", p:"Tak", en:"Day", tr:"Gün"},
+                {t:"Nacht", p:"Naht", en:"Night", tr:"Gece"}, {t:"Sonne", p:"Zo-ne", en:"Sun", tr:"Güneş"},
+                {t:"Mond", p:"Mont", en:"Moon", tr:"Ay"}, {t:"Haus", p:"Haus", en:"House", tr:"Ev"},
+                {t:"Katze", p:"Kat-se", en:"Cat", tr:"Kedi"}, {t:"Hund", p:"Hunt", en:"Dog", tr:"Köpek"},
+                {t:"Frau", p:"Frau", en:"Woman", tr:"Kadın"}, {t:"Mann", p:"Man", en:"Man", tr:"Adam"},
+                {t:"Kind", p:"Kint", en:"Child", tr:"Çocuk"}, {t:"Junge", p:"Yun-ge", en:"Boy", tr:"Erkek çocuk"},
+                {t:"Mädchen", p:"Met-hen", en:"Girl", tr:"Kız çocuk"}, {t:"Buch", p:"Buh", en:"Book", tr:"Kitap"},
+                {t:"Tisch", p:"Tiş", en:"Table", tr:"Masa"}, {t:"Stuhl", p:"Ştul", en:"Chair", tr:"Sandalye"},
+                {t:"Tür", p:"Tür", en:"Door", tr:"Kapı"}, {t:"Fenster", p:"Fens-ter", en:"Window", tr:"Pencere"},
+                {t:"Auto", p:"Au-to", en:"Car", tr:"Araba"}, {t:"Straße", p:"Ştra-se", en:"Street", tr:"Sokak"},
+                {t:"Stadt", p:"Ştat", en:"City", tr:"Şehir"}, {t:"Land", p:"Lant", en:"Country", tr:"Ülke"},
+                {t:"Welt", p:"Velt", en:"World", tr:"Dünya"}, {t:"Schule", p:"Şu-le", en:"School", tr:"Okul"},
+                {t:"Arbeit", p:"Ar-bayt", en:"Work", tr:"İş"}, {t:"Geld", p:"Gelt", en:"Money", tr:"Para"},
+                {t:"Essen", p:"E-sen", en:"Food", tr:"Yemek"}, {t:"Fleisch", p:"Flayş", en:"Meat", tr:"Et"},
+                {t:"Fisch", p:"Fiş", en:"Fish", tr:"Balık"}, {t:"Obst", p:"Opst", en:"Fruit", tr:"Meyve"},
+                {t:"Gemüse", p:"Ge-mü-ze", en:"Vegetable", tr:"Sebze"}, {t:"Rot", p:"Rot", en:"Red", tr:"Kırmızı"},
+                {t:"Blau", p:"Blau", en:"Blue", tr:"Mavi"}, {t:"Grün", p:"Grün", en:"Green", tr:"Yeşil"},
+                {t:"Gelb", p:"Gelp", en:"Yellow", tr:"Sarı"}, {t:"Weiß", p:"Vays", en:"White", tr:"Beyaz"},
+                {t:"Schwarz", p:"Şvarts", en:"Black", tr:"Siyah"}, {t:"Groß", p:"Gros", en:"Big", tr:"Büyük"},
+                {t:"Klein", p:"Klayn", en:"Small", tr:"Küçük"}, {t:"Gut", p:"Gut", en:"Good", tr:"İyi"},
+                {t:"Schlecht", p:"Şleht", en:"Bad", tr:"Kötü"}, {t:"Glücklich", p:"Glük-lih", en:"Happy", tr:"Mutlu"},
+                {t:"Traurig", p:"Trau-rih", en:"Sad", tr:"Üzgün"}, {t:"Müde", p:"Mü-de", en:"Tired", tr:"Yorgun"},
+                {t:"Krank", p:"Krank", en:"Sick", tr:"Hasta"}, {t:"Heiß", p:"Hays", en:"Hot", tr:"Sıcak"},
+                {t:"Kalt", p:"Kalt", en:"Cold", tr:"Soğuk"}, {t:"Neu", p:"Noy", en:"New", tr:"Yeni"},
+                {t:"Alt", p:"Alt", en:"Old", tr:"Eski"}, {t:"Jung", p:"Yung", en:"Young", tr:"Genç"},
+                {t:"Schnell", p:"Şnel", en:"Fast", tr:"Hızlı"}, {t:"Langsam", p:"Lang-zam", en:"Slow", tr:"Yavaş"},
+                {t:"Schwer", p:"Şver", en:"Difficult", tr:"Zor"}, {t:"Einfach", p:"Ayn-fah", en:"Easy", tr:"Kolay"},
+                {t:"Wahrheit", p:"Var-hayt", en:"Truth", tr:"Gerçek"}, {t:"Lüge", p:"Lü-ge", en:"Lie", tr:"Yalan"},
+                {t:"Heute", p:"Hoy-te", en:"Today", tr:"Bugün"}, {t:"Morgen", p:"Mor-gen", en:"Tomorrow/Morning", tr:"Yarın/Sabah"},
+                {t:"Gestern", p:"Ges-tern", en:"Yesterday", tr:"Dün"}, {t:"Woche", p:"Vo-he", en:"Week", tr:"Hafta"},
+                {t:"Monat", p:"Mo-nat", en:"Month", tr:"Ay"}, {t:"Jahr", p:"Yar", en:"Year", tr:"Yıl"},
+                {t:"Stunde", p:"Ştun-de", en:"Hour", tr:"Saat"}, {t:"Montag", p:"Mon-tak", en:"Monday", tr:"Pazartesi"},
+                {t:"Dienstag", p:"Dins-tak", en:"Tuesday", tr:"Salı"}, {t:"Mittwoch", p:"Mit-voh", en:"Wednesday", tr:"Çarşamba"},
+                {t:"Donnerstag", p:"Do-ners-tak", en:"Thursday", tr:"Perşembe"}, {t:"Freitag", p:"Fray-tak", en:"Friday", tr:"Cuma"},
+                {t:"Samstag", p:"Zams-tak", en:"Saturday", tr:"Cumartesi"}, {t:"Sonntag", p:"Zon-tak", en:"Sunday", tr:"Pazar"},
+                {t:"Eins", p:"Ayns", en:"One", tr:"Bir"}, {t:"Zwei", p:"Tsvay", en:"Two", tr:"İki"},
+                {t:"Drei", p:"Dray", en:"Three", tr:"Üç"}, {t:"Vier", p:"Fir", en:"Four", tr:"Dört"},
+                {t:"Fünf", p:"Fünf", en:"Five", tr:"Beş"}, {t:"Sechs", p:"Zeks", en:"Six", tr:"Altı"},
+                {t:"Sieben", p:"Zi-ben", en:"Seven", tr:"Yedi"}, {t:"Acht", p:"Aht", en:"Eight", tr:"Sekiz"},
+                {t:"Neun", p:"Noyn", en:"Nine", tr:"Dokuz"}, {t:"Zehn", p:"Tsen", en:"Ten", tr:"On"},
+                {t:"Mutter", p:"Mu-ter", en:"Mother", tr:"Anne"}, {t:"Vater", p:"Fa-ter", en:"Father", tr:"Baba"},
+                {t:"Bruder", p:"Bru-der", en:"Brother", tr:"Erkek kardeş"}, {t:"Schwester", p:"Şves-ter", en:"Sister", tr:"Kız kardeş"},
+                {t:"Hand", p:"Hant", en:"Hand", tr:"El"}, {t:"Fuß", p:"Fus", en:"Foot", tr:"Ayak"},
+                {t:"Auge", p:"Au-ge", en:"Eye", tr:"Göz"}, {t:"Mund", p:"Munt", en:"Mouth", tr:"Ağız"},
+                {t:"Kopf", p:"Kopf", en:"Head", tr:"Baş"}, {t:"Herz", p:"Herts", en:"Heart", tr:"Kalp"}
+            ],
+            idioms: [
+                {t:"Tomaten auf den Augen haben", p:"To-ma-ten auf den au-gen ha-ben", en:"To be oblivious (Lit: Have tomatoes on eyes)", tr:"Gözünün önündekini görememek. (Kelime: Gözlerinde domates olmak)"},
+                {t:"Ich verstehe nur Bahnhof", p:"İh fer-şte-he nur ban-hof", en:"It's all Greek to me (Lit: I only understand train station)", tr:"Hiçbir şey anlamıyorum. (Kelime: Sadece tren istasyonu anlıyorum)"},
+                {t:"Da liegt der Hund begraben", p:"Da ligt der hunt beg-ra-ben", en:"That's the crux of the matter (Lit: There the dog is buried)", tr:"İşte meselenin özü bu. (Kelime: Köpek orada gömülü)"},
+                {t:"Die Daumen drücken", p:"Di dau-men drü-ken", en:"To cross fingers (Lit: To press thumbs)", tr:"Şans dilemek. (Kelime: Başparmakları sıkmak)"},
+                {t:"Schwein haben", p:"Şvayn ha-ben", en:"To be lucky (Lit: To have a pig)", tr:"Şanslı olmak. (Kelime: Domuza sahip olmak)"},
+                {t:"Einen Kater haben", p:"Ay-nen ka-ter ha-ben", en:"To have a hangover (Lit: to have a tomcat).", tr:"Akşamdan kalma olmak. (Kelime: Erkek kediye sahip olmak)"},
+                {t:"Schnee von gestern", p:"Şne fon ges-tern", en:"Water under the bridge (Lit: snow from yesterday).", tr:"Geçmişte kaldı, eski mesele. (Kelime: Dünkü kar)"},
+                {t:"Auf dem Holzweg sein", p:"Auf dem holts-veg zayn", en:"To be on the wrong track (Lit: to be on the wood path).", tr:"Yanlış yolda olmak. (Kelime: Odun yolunda olmak)"},
+                {t:"Den Nagel auf den Kopf treffen", p:"Den na-gel auf den kopf tre-fen", en:"To hit the nail on the head.", tr:"Taşı gediğine koymak, tam isabet."},
+                {t:"Ins Fettnäpfchen treten", p:"İns fet-nepf-hen tre-ten", en:"To put one's foot in one's mouth (Lit: step in fat bowl).", tr:"Pot kırmak, çam devirmek. (Kelime: Yağ kabına basmak)"},
+                {t:"Jemandem die Daumen drücken", p:"Ye-man-dem di dau-men drü-ken", en:"To keep one's fingers crossed for someone.", tr:"Birine şans dilemek."},
+                {t:"Nicht alle Tassen im Schrank haben", p:"Niht a-le ta-sen im şrank ha-ben", en:"To be a bit crazy (Lit: not have all cups in the cupboard).", tr:"Tahtası eksik olmak. (Kelime: Dolaptaki tüm fincanlara sahip olmamak)"},
+                {t:"Das Haar in der Suppe suchen", p:"Das har in der zu-pe zu-hen", en:"To be a faultfinder (Lit: seek the hair in the soup).", tr:"Kusur aramak. (Kelime: Çorbada saç aramak)"},
+                {t:"Wie Pilze aus dem Boden schießen", p:"Vi pil-tse aus dem bo-den şi-sen", en:"To spring up like mushrooms.", tr:"Mantar gibi türemek."},
+                {t:"Aus der Mücke einen Elefanten machen", p:"Aus der mü-ke ay-nen e-le-fan-ten ma-hen", en:"To make a mountain out of a molehill (Lit: mosquito to elephant).", tr:"Pireyi deve yapmak. (Kelime: Sivrisineği fil yapmak)"},
+                {t:"Den Löffel abgeben", p:"Den lö-fel ap-ge-ben", en:"To kick the bucket (Lit: to hand over the spoon).", tr:"Hakkın rahmetine kavuşmak. (Kelime: Kaşığı teslim etmek)"},
+                {t:"Mit dem falschen Fuß aufstehen", p:"Mit dem fal-şen fus auf-şte-en", en:"To get up on the wrong side of the bed.", tr:"Tersinden kalkmak. (Kelime: Yanlış ayakla kalkmak)"},
+                {t:"Zwei linke Hände haben", p:"Tsvay lin-ke hen-de ha-ben", en:"To be clumsy (Lit: to have two left hands).", tr:"Beceriksiz olmak. (Kelime: İki sol ele sahip olmak)"},
+                {t:"Die Katze im Sack kaufen", p:"Di kat-se im zak kau-fen", en:"To buy a pig in a poke (Lit: buy the cat in the sack).", tr:"Görmeden/incelemeden almak. (Kelime: Kediyi çuvalda almak)"},
+                {t:"Um den heißen Brei herumreden", p:"Um den hay-sen bray he-rum-re-den", en:"To beat around the bush (Lit: talk around the hot porridge).", tr:"Lafı gevelemek. (Kelime: Sıcak lapanın etrafında konuşmak)"},
+                {t:"Unter vier Augen", p:"Un-ter fir au-gen", en:"In private (Lit: under four eyes).", tr:"Baş başa, gizlice. (Kelime: Dört göz altında)"},
+                {t:"Jemandem einen Bären aufbinden", p:"Ye-man-dem ay-nen be-ren auf-bin-den", en:"To pull someone's leg (Lit: tie a bear on someone).", tr:"Birini işletmek, kandırmak. (Kelime: Birine ayı bağlamak)"},
+                {t:"Ein Auge zudrücken", p:"Ayn au-ge tsu-drü-ken", en:"To turn a blind eye (Lit: to press one eye closed).", tr:"Görmezden gelmek. (Kelime: Bir gözü bastırmak/kapatmak)"},
+                {t:"Das Leben ist kein Ponyhof", p:"Das le-ben ist kayn po-ni-hof", en:"Life isn't a bed of roses (Lit: life is no pony farm).", tr:"Hayat her zaman kolay değildir. (Kelime: Hayat midilli çiftliği değildir)"},
+                {t:"Bock haben", p:"Bok ha-ben", en:"To be up for something / in the mood (Lit: to have a buck).", tr:"Bir şeyi çok istemek, hevesli olmak."}
+            ],
+            proverbs: [
+                {t:"Übung macht den Meister", p:"Ü-bung maht den mays-ter", en:"Practice makes perfect.", tr:"Pratik mükemmelleştirir."},
+                {t:"Morgenstund hat Gold im Mund", p:"Mor-gen-ştunt hat golt im munt", en:"The early bird catches the worm.", tr:"Erken kalkan yol alır. (Kelime: Sabah saatinin ağzında altın vardır)"},
+                {t:"Aller Anfang ist schwer", p:"A-ler an-fang ist şver", en:"Every beginning is difficult.", tr:"Her başlangıç zordur."},
+                {t:"Ende gut, alles gut", p:"En-de gut, a-les gut", en:"All's well that ends well.", tr:"Sonu iyi biten her şey iyidir."},
+                {t:"Lügen haben kurze Beine", p:"Lü-gen ha-ben kurt-se bay-ne", en:"Lies have short legs.", tr:"Yalancının mumu yatsıya kadar yanar. (Kelime: Yalanların bacakları kısadır)"},
+                {t:"Der Apfel fällt nicht weit vom Stamm", p:"Der ap-fel felt niht vayt fom ştam", en:"The apple doesn't fall far from the tree.", tr:"Armut dibine düşer."},
+                {t:"Wer rastet, der rostet", p:"Ver ras-tet, der ros-tet", en:"Use it or lose it. (Lit: He who rests, rusts)", tr:"İşleyen demir ışıldar. (Kelime: Dinlenen paslanır)"},
+                {t:"Kleider machen Leute", p:"Klay-der ma-hen loy-te", en:"Clothes make the man.", tr:"Ye kürküm ye. (Kelime: Kıyafetler insanı yapar)"},
+                {t:"Besser spät als nie", p:"Be-ser şpet als ni", en:"Better late than never.", tr:"Geç olsun güç olmasın."},
+                {t:"Einem geschenkten Gaul schaut man nicht ins Maul", p:"Ay-nem ge-şenk-ten gaul...", en:"Don't look a gift horse in the mouth.", tr:"Beleş atın dişine bakılmaz."},
+                {t:"Aus Schaden wird man klug", p:"Aus şa-den virt man klug", en:"One learns from one's mistakes.", tr:"Sütten ağzı yanan yoğurdu üfleyerek yer. (Kelime: Zarardan akıllanılır)"},
+                {t:"Wer A sagt, muss auch B sagen", p:"Ver A zagt, mus auh B za-gen", en:"In for a penny, in for a pound. (Lit: Who says A must say B)", tr:"Başlanan işi bitirmek gerekir. (Kelime: A diyen B de demelidir)"},
+                {t:"Was du heute kannst besorgen, das verschiebe nicht auf morgen", p:"Vas du hoy-te kanst be-zor-gen...", en:"Don't put off until tomorrow what you can do today.", tr:"Bugünün işini yarına bırakma."},
+                {t:"Viele Köche verderben den Brei", p:"Fi-le kö-he fer-der-ben den bray", en:"Too many cooks spoil the broth.", tr:"Horozu çok olan köyün sabahı geç olur. (Kelime: Çok aşçı lapayı bozar)"},
+                {t:"Ohne Fleiß, kein Preis", p:"O-ne flays, kayn prays", en:"No pain, no gain. (Lit: Without diligence, no prize)", tr:"Zahmetsiz rahmet olmaz. (Kelime: Çalışmadan ödül olmaz)"},
+                {t:"Hunde, die bellen, beißen nicht", p:"Hun-de, di be-len, bay-sen niht", en:"Barking dogs seldom bite.", tr:"Havlayan köpek ısırmaz."},
+                {t:"Stille Wasser sind tief", p:"Şti-le va-ser zint tif", en:"Still waters run deep.", tr:"Sessiz atın çiftesi pek olur. (Kelime: Durgun sular derindir)"},
+                {t:"Wer im Glashaus sitzt, sollte nicht mit Steinen werfen", p:"Ver im glas-haus zitst...", en:"People in glass houses shouldn't throw stones.", tr:"Sırça köşkte oturan komşusuna taş atmamalı."},
+                {t:"Jeder ist seines Glückes Schmied", p:"Ye-der ist zay-nes glü-kes şmit", en:"Every man is the architect of his own fortune.", tr:"Herkes kendi kaderinin demircisidir."},
+                {t:"Es ist noch kein Meister vom Himmel gefallen", p:"Es ist noh kayn mays-ter...", en:"No one is born a master.", tr:"Hiç kimse anadan doğma usta değildir. (Kelime: Gökten henüz usta düşmedi)"},
+                {t:"Rom wurde auch nicht an einem Tag erbaut", p:"Rom vur-de auh niht...", en:"Rome wasn't built in a day.", tr:"Roma da bir günde inşa edilmedi."},
+                {t:"Liebe macht blind", p:"Li-be maht blint", en:"Love is blind.", tr:"Aşkın gözü kördür."},
+                {t:"In der Not frisst der Teufel Fliegen", p:"In der not frist der toy-fel fli-gen", en:"Beggars can't be choosers. (Lit: In need, the devil eats flies)", tr:"Zorda kalan ne bulsa yetinir. (Kelime: Darlıkta şeytan sinek yer)"},
+                {t:"Man soll den Tag nicht vor dem Abend loben", p:"Man zol den tak niht...", en:"Don't praise the day before the evening.", tr:"Dereyi görmeden paçaları sıvama."},
+                {t:"Wie man in den Wald hineinruft, so schallt es heraus", p:"Vi man in den valt...", en:"What goes around comes around. (Lit: How you shout into the forest, it echoes back)", tr:"Ne ekersen onu biçersin."}
+            ],
+            specials: [
+                {t:"Schadenfreude", p:"Şa-den-froy-de", en:"Pleasure derived from another's misfortune.", tr:"Başkasının talihsizliğinden duyulan zevk."},
+                {t:"Fernweh", p:"Fern-ve", en:"A longing for distant places.", tr:"Uzak yerlere duyulan özlem (Ev özleminin tersi)."},
+                {t:"Wanderlust", p:"Van-der-lust", en:"A strong desire to travel.", tr:"Güçlü seyahat etme arzusu."},
+                {t:"Ohrwurm", p:"Or-vurm", en:"A catchy song stuck in your head (Lit: Ear worm).", tr:"Dile pelesenk olan, akla takılan şarkı."},
+                {t:"Weltschmerz", p:"Velt-şmerts", en:"World-weariness; sadness over the state of the world.", tr:"Dünyanın haline üzülmekten kaynaklanan melankoli."},
+                {t:"Zeitgeist", p:"Tsayt-gayst", en:"The spirit of the times.", tr:"Zamanın ruhu, dönemin genel zihniyeti."},
+                {t:"Feierabend", p:"Fay-er-a-bent", en:"The festive mood at the end of a workday.", tr:"Mesai bitiminde hissedilen rahatlama ve kutlama hali."},
+                {t:"Kummerspeck", p:"Ku-mer-şpek", en:"Excess weight gained from emotional overeating.", tr:"Üzüntüden çok yiyerek alınan kilolar (Dert pastırması)."},
+                {t:"Torschlusspanik", p:"Tor-şlus-pa-nik", en:"Fear of missing out on life as one gets older.", tr:"Yaşlandıkça hayattaki fırsatları kaçırma korkusu (Kapı kapanma paniği)."},
+                {t:"Verschlimmbessern", p:"Fer-şlim-be-sern", en:"To make something worse while trying to improve it.", tr:"Bir şeyi düzeltmeye çalışırken daha da berbat etmek."},
+                {t:"Fremdschämen", p:"Fremt-şe-men", en:"To feel embarrassed on behalf of someone else.", tr:"Başkası adına utanmak."},
+                {t:"Erklärungsnot", p:"Er-kle-rungs-not", en:"The state of having to quickly explain yourself out of trouble.", tr:"Zor durumda kalıp acilen açıklama yapma zorunluluğu."}
+            ],
+            grammar: [
+                {
+                    title: {en: "Nouns & Capitalization", tr: "İsimler ve Büyük Harf Kullanımı"},
+                    exp: {en: "In German, ALL nouns must be capitalized, regardless of where they are in a sentence.", tr: "Almancada cümlenin neresinde olursa olsun TÜM isimler büyük harfle başlar."},
+                    ex: "Das ist ein schönes Haus. (That is a beautiful house.)",
+                    q: {en: "Which sentence is correctly capitalized?", tr: "Hangi cümle doğru şekilde büyük harfle yazılmıştır?"},
+                    options: ["Ich habe einen hund.", "Ich habe einen Hund.", "ich habe einen Hund.", "Ich Habe Einen Hund."],
+                    ans: 1
+                },
+                {
+                    title: {en: "Definite Articles (Der, Die, Das)", tr: "Belirli Tanımlıklar (Der, Die, Das)"},
+                    exp: {en: "German has 3 genders: Der (Masculine), Die (Feminine), Das (Neuter).", tr: "Almancada 3 cinsiyet vardır: Der (Eril), Die (Dişil), Das (Nötr)."},
+                    ex: "Der Mann, Die Frau, Das Kind",
+                    q: {en: "Which article is used for 'Frau' (Woman)?", tr: "'Frau' (Kadın) için hangi artikel kullanılır?"},
+                    options: ["Der", "Die", "Das", "Den"],
+                    ans: 1
+                },
+                {
+                    title: {en: "Verb Position in Main Clauses", tr: "Ana Cümlede Fiilin Yeri"},
+                    exp: {en: "In a standard main clause, the conjugated verb is ALWAYS in the second position.", tr: "Standart bir ana cümlede, çekimlenmiş fiil HER ZAMAN ikinci sıradadır."},
+                    ex: "Ich gehe heute ins Kino. (I go to the cinema today.)",
+                    q: {en: "Which sentence has the correct word order?", tr: "Hangi cümlenin kelime dizilimi doğrudur?"},
+                    options: ["Heute ich gehe ins Kino.", "Ich heute gehe ins Kino.", "Heute gehe ich ins Kino.", "Heute ins Kino gehe ich."],
+                    ans: 2
+                }
+            ]
+        },
+        it: {
+            words: [
+                {t:"Ciao", p:"Çao", en:"Hello/Goodbye", tr:"Merhaba/Hoşçakal"}, {t:"Arrivederci", p:"A-ri-ve-der-çi", en:"Goodbye", tr:"Görüşmek üzere"},
+                {t:"Grazie", p:"Grat-sye", en:"Thank you", tr:"Teşekkürler"}, {t:"Per favore", p:"Per fa-vo-re", en:"Please", tr:"Lütfen"},
+                {t:"Sì", p:"Si", en:"Yes", tr:"Evet"}, {t:"No", p:"No", en:"No", tr:"Hayır"},
+                {t:"Acqua", p:"A-kua", en:"Water", tr:"Su"}, {t:"Pane", p:"Pa-ne", en:"Bread", tr:"Ekmek"},
+                {t:"Amico", p:"A-mi-ko", en:"Friend", tr:"Arkadaş"}, {t:"Famiglia", p:"Fa-mil-ya", en:"Family", tr:"Aile"},
+                {t:"Tempo", p:"Tem-po", en:"Time", tr:"Zaman"}, {t:"Giorno", p:"Cyor-no", en:"Day", tr:"Gün"},
+                {t:"Notte", p:"Not-te", en:"Night", tr:"Gece"}, {t:"Sole", p:"So-le", en:"Sun", tr:"Güneş"},
+                {t:"Luna", p:"Lu-na", en:"Moon", tr:"Ay"}, {t:"Casa", p:"Ka-za", en:"House", tr:"Ev"},
+                {t:"Gatto", p:"Gat-to", en:"Cat", tr:"Kedi"}, {t:"Cane", p:"Ka-ne", en:"Dog", tr:"Köpek"},
+                {t:"Donna", p:"Don-na", en:"Woman", tr:"Kadın"}, {t:"Uomo", p:"Uo-mo", en:"Man", tr:"Adam"},
+                {t:"Bambino", p:"Bam-bi-no", en:"Child/Boy", tr:"Çocuk/Erkek çocuk"}, {t:"Bambina", p:"Bam-bi-na", en:"Girl", tr:"Kız çocuk"},
+                {t:"Libro", p:"Lib-ro", en:"Book", tr:"Kitap"}, {t:"Tavolo", p:"Ta-vo-lo", en:"Table", tr:"Masa"},
+                {t:"Sedia", p:"Se-di-ya", en:"Chair", tr:"Sandalye"}, {t:"Porta", p:"Por-ta", en:"Door", tr:"Kapı"},
+                {t:"Finestra", p:"Fi-nes-tra", en:"Window", tr:"Pencere"}, {t:"Macchina", p:"Mak-ki-na", en:"Car", tr:"Araba"},
+                {t:"Strada", p:"Stra-da", en:"Street", tr:"Sokak"}, {t:"Città", p:"Çit-ta", en:"City", tr:"Şehir"},
+                {t:"Paese", p:"Pa-e-ze", en:"Country", tr:"Ülke"}, {t:"Mondo", p:"Mon-do", en:"World", tr:"Dünya"},
+                {t:"Scuola", p:"Sku-o-la", en:"School", tr:"Okul"}, {t:"Lavoro", p:"La-vo-ro", en:"Work", tr:"İş"},
+                {t:"Denaro", p:"De-na-ro", en:"Money", tr:"Para"}, {t:"Cibo", p:"Çi-bo", en:"Food", tr:"Yemek"},
+                {t:"Carne", p:"Kar-ne", en:"Meat", tr:"Et"}, {t:"Pesce", p:"Peş-şe", en:"Fish", tr:"Balık"},
+                {t:"Frutta", p:"Frut-ta", en:"Fruit", tr:"Meyve"}, {t:"Verdura", p:"Ver-du-ra", en:"Vegetable", tr:"Sebze"},
+                {t:"Rosso", p:"Ros-so", en:"Red", tr:"Kırmızı"}, {t:"Blu", p:"Blu", en:"Blue", tr:"Mavi"},
+                {t:"Verde", p:"Ver-de", en:"Green", tr:"Yeşil"}, {t:"Giallo", p:"Cal-lo", en:"Yellow", tr:"Sarı"},
+                {t:"Bianco", p:"Biyan-ko", en:"White", tr:"Beyaz"}, {t:"Nero", p:"Ne-ro", en:"Black", tr:"Siyah"},
+                {t:"Grande", p:"Gran-de", en:"Big", tr:"Büyük"}, {t:"Piccolo", p:"Pik-ko-lo", en:"Small", tr:"Küçük"},
+                {t:"Buono", p:"Bu-o-no", en:"Good", tr:"İyi"}, {t:"Cattivo", p:"Kat-ti-vo", en:"Bad", tr:"Kötü"},
+                {t:"Felice", p:"Fe-li-çe", en:"Happy", tr:"Mutlu"}, {t:"Triste", p:"Tris-te", en:"Sad", tr:"Üzgün"},
+                {t:"Stanco", p:"Stan-ko", en:"Tired", tr:"Yorgun"}, {t:"Malato", p:"Ma-la-to", en:"Sick", tr:"Hasta"},
+                {t:"Caldo", p:"Kal-do", en:"Hot", tr:"Sıcak"}, {t:"Freddo", p:"Fred-do", en:"Cold", tr:"Soğuk"},
+                {t:"Nuovo", p:"Nu-o-vo", en:"New", tr:"Yeni"}, {t:"Vecchio", p:"Vek-ki-yo", en:"Old", tr:"Eski"},
+                {t:"Giovane", p:"Co-va-ne", en:"Young", tr:"Genç"}, {t:"Veloce", p:"Ve-lo-çe", en:"Fast", tr:"Hızlı"},
+                {t:"Lento", p:"Len-to", en:"Slow", tr:"Yavaş"}, {t:"Difficile", p:"Dif-fi-çi-le", en:"Difficult", tr:"Zor"},
+                {t:"Facile", p:"Fa-çi-le", en:"Easy", tr:"Kolay"}, {t:"Verità", p:"Ve-ri-ta", en:"Truth", tr:"Gerçek"},
+                {t:"Bugia", p:"Bu-ci-ya", en:"Lie", tr:"Yalan"}, {t:"Oggi", p:"Oc-ci", en:"Today", tr:"Bugün"},
+                {t:"Domani", p:"Do-ma-ni", en:"Tomorrow", tr:"Yarın"}, {t:"Ieri", p:"I-ye-ri", en:"Yesterday", tr:"Dün"},
+                {t:"Settimana", p:"Set-ti-ma-na", en:"Week", tr:"Hafta"}, {t:"Mese", p:"Me-ze", en:"Month", tr:"Ay"},
+                {t:"Anno", p:"An-no", en:"Year", tr:"Yıl"}, {t:"Ora", p:"O-ra", en:"Hour", tr:"Saat"},
+                {t:"Lunedì", p:"Lu-ne-di", en:"Monday", tr:"Pazartesi"}, {t:"Martedì", p:"Mar-te-di", en:"Tuesday", tr:"Salı"},
+                {t:"Mercoledì", p:"Mer-ko-le-di", en:"Wednesday", tr:"Çarşamba"}, {t:"Giovedì", p:"Co-ve-di", en:"Thursday", tr:"Perşembe"},
+                {t:"Venerdì", p:"Ve-ner-di", en:"Friday", tr:"Cuma"}, {t:"Sabato", p:"Sa-ba-to", en:"Saturday", tr:"Cumartesi"},
+                {t:"Domenica", p:"Do-men-i-ka", en:"Sunday", tr:"Pazar"}, {t:"Uno", p:"U-no", en:"One", tr:"Bir"},
+                {t:"Due", p:"Du-e", en:"Two", tr:"İki"}, {t:"Tre", p:"Tre", en:"Three", tr:"Üç"},
+                {t:"Quattro", p:"Kuat-ro", en:"Four", tr:"Dört"}, {t:"Cinque", p:"Çin-kue", en:"Five", tr:"Beş"},
+                {t:"Sei", p:"Se-i", en:"Six", tr:"Altı"}, {t:"Sette", p:"Set-te", en:"Seven", tr:"Yedi"},
+                {t:"Otto", p:"Ot-to", en:"Eight", tr:"Sekiz"}, {t:"Nove", p:"No-ve", en:"Nine", tr:"Dokuz"},
+                {t:"Dieci", p:"Di-ye-çi", en:"Ten", tr:"On"}, {t:"Madre", p:"Mad-re", en:"Mother", tr:"Anne"},
+                {t:"Padre", p:"Pad-re", en:"Father", tr:"Baba"}, {t:"Fratello", p:"Fra-tel-lo", en:"Brother", tr:"Erkek kardeş"},
+                {t:"Sorella", p:"So-rel-la", en:"Sister", tr:"Kız kardeş"}, {t:"Mano", p:"Ma-no", en:"Hand", tr:"El"},
+                {t:"Piede", p:"Pi-ye-de", en:"Foot", tr:"Ayak"}, {t:"Occhio", p:"Ok-ki-yo", en:"Eye", tr:"Göz"},
+                {t:"Bocca", p:"Bok-ka", en:"Mouth", tr:"Ağız"}, {t:"Testa", p:"Tes-ta", en:"Head", tr:"Baş"},
+                {t:"Cuore", p:"Ku-o-re", en:"Heart", tr:"Kalp"}, {t:"Amore", p:"A-mo-re", en:"Love", tr:"Aşk"}
+            ],
+            idioms: [
+                {t:"In bocca al lupo", p:"İn bok-ka al lu-po", en:"Good luck (Lit: In the mouth of the wolf)", tr:"İyi şanslar. (Kelime: Kurdun ağzında)"},
+                {t:"Piove sul bagnato", p:"Pyo-ve sul ban-ya-to", en:"When it rains, it pours (Lit: It rains on the wet)", tr:"Aksilikler üst üste gelir. (Kelime: Islağın üzerine yağıyor)"},
+                {t:"Avere le mani in pasta", p:"A-ve-re le ma-ni in pas-ta", en:"To have a finger in the pie (Lit: To have hands in dough)", tr:"Bir işin içinde olmak, müdahil olmak."},
+                {t:"Non avere peli sulla lingua", p:"Non a-ve-re pe-li sul-la lin-gua", en:"To speak one's mind (Lit: Not have hair on tongue)", tr:"Dobra konuşmak, lafını esirgememek."},
+                {t:"Prendere due piccioni con una fava", p:"Pren-de-re du-e piç-ço-ni kon u-na fa-va", en:"To kill two birds with one stone (Lit: catch two pigeons with one bean)", tr:"Bir taşla iki kuş vurmak."},
+                {t:"Acqua in bocca", p:"A-kua in bok-ka", en:"Keep it a secret. (Lit: Water in the mouth)", tr:"Aramızda kalsın, sır tut. (Kelime: Ağızda su)"},
+                {t:"Costare un occhio della testa", p:"Kos-ta-re un ok-ki-yo del-la tes-ta", en:"To cost an arm and a leg. (Lit: Cost an eye of the head)", tr:"Ateş pahası olmak. (Kelime: Başın bir gözüne mal olmak)"},
+                {t:"Essere in gamba", p:"Es-se-re in gam-ba", en:"To be smart/capable. (Lit: To be in leg)", tr:"Becerikli, akıllı olmak. (Kelime: Bacakta olmak)"},
+                {t:"Fare le ore piccole", p:"Fa-re le o-re pik-ko-le", en:"To stay up late. (Lit: Do the small hours)", tr:"Gece geç saatlere kadar uyanık kalmak."},
+                {t:"Avere un chiodo fisso", p:"A-ve-re un kio-do fis-so", en:"To be obsessed with something. (Lit: Have a fixed nail)", tr:"Bir şeye takıntılı olmak. (Kelime: Sabit bir çiviye sahip olmak)"},
+                {t:"Sputare il rospo", p:"Spu-ta-re il ros-po", en:"To spit it out / confess. (Lit: Spit the toad)", tr:"Ağzındaki baklayı çıkarmak, itiraf etmek. (Kelime: Kurbağayı tükürmek)"},
+                {t:"Fare finta di niente", p:"Fa-re fin-ta di nyen-te", en:"To turn a blind eye. (Lit: Make pretend of nothing)", tr:"Hiçbir şey olmamış gibi davranmak, görmezden gelmek."},
+                {t:"Avere il braccino corto", p:"A-ve-re il braç-çi-no kor-to", en:"To be stingy. (Lit: Have the short little arm)", tr:"Cimri olmak. (Kelime: Kısa kollu olmak - cebine uzanamamak)"},
+                {t:"Essere al verde", p:"Es-se-re al ver-de", en:"To be broke. (Lit: To be at the green)", tr:"Parasız kalmak, meteliksiz olmak. (Cüzdanın yeşil astarının görünmesi)"},
+                {t:"Fare un buco nell'acqua", p:"Fa-re un bu-ko nel a-kua", en:"A useless attempt. (Lit: Make a hole in water)", tr:"Boşa kürek çekmek. (Kelime: Suda delik açmak)"},
+                {t:"Un pezzo di pane", p:"Un pet-tso di pa-ne", en:"A very good person. (Lit: A piece of bread)", tr:"Çok iyi, melek gibi insan. (Kelime: Bir parça ekmek)"},
+                {t:"Calzino spaiato", p:"Kal-tsi-no spa-ya-to", en:"Odd one out. (Lit: Unmatched sock)", tr:"Uyumsuz, dışlanmış kişi. (Kelime: Teki kayıp çorap)"},
+                {t:"Cadere dalle nuvole", p:"Ka-de-re dal-le nu-vo-le", en:"To be completely surprised. (Lit: Fall from clouds)", tr:"Şok olmak, çok şaşırmak. (Kelime: Bulutlardan düşmek)"},
+                {t:"Chiudere un occhio", p:"Kiu-de-re un ok-ki-yo", en:"To turn a blind eye. (Lit: Close an eye)", tr:"Görmezden gelmek. (Kelime: Bir gözü kapatmak)"},
+                {t:"Gettare la spugna", p:"Cet-ta-re la spun-ya", en:"To throw in the towel. (Lit: Throw the sponge)", tr:"Pes etmek. (Kelime: Süngeri atmak)"},
+                {t:"Non stare nella pelle", p:"Non sta-re nel-la pel-le", en:"To be jumping for joy. (Lit: Not stay in skin)", tr:"Sevinçten havalara uçmak. (Kelime: Derisine sığmamak)"},
+                {t:"Lavarsene le mani", p:"La-var-se-ne le ma-ni", en:"To wash one's hands of it.", tr:"Bir işten elini eteğini çekmek, sorumluluk almamak."},
+                {t:"Tirare il calzino", p:"Ti-ra-re il kal-tsi-no", en:"To die. (Lit: Pull the sock)", tr:"Ölmek, nalları dikmek."},
+                {t:"Avere la testa tra le nuvole", p:"A-ve-re la tes-ta tra le nu-vo-le", en:"To be daydreaming. (Lit: Head in clouds)", tr:"Aklı havada olmak."},
+                {t:"Arrampicarsi sugli specchi", p:"A-ram-pi-kar-si sul-yi spek-ki", en:"To make lame excuses. (Lit: Climb on mirrors)", tr:"Boş bahaneler üretmek, zeytinyağı gibi üste çıkmaya çalışmak."}
+            ],
+            proverbs: [
+                {t:"Chi dorme non piglia pesci", p:"Ki dor-me non pil-ya peş-şi", en:"The early bird catches the worm. (Lit: He who sleeps doesn't catch fish)", tr:"Uyuyan balık tutamaz."},
+                {t:"Meglio tardi che mai", p:"Mel-yo tar-di ke may", en:"Better late than never.", tr:"Geç olsun güç olmasın."},
+                {t:"Tutte le strade portano a Roma", p:"Tut-te le stra-de por-ta-no a Ro-ma", en:"All roads lead to Rome.", tr:"Bütün yollar Roma'ya çıkar."},
+                {t:"Roma non è stata costruita in un giorno", p:"Ro-ma non e sta-ta kos-tru-i-ta in un cyor-no", en:"Rome wasn't built in a day.", tr:"Roma bir günde inşa edilmedi."},
+                {t:"Finché c'è vita c'è speranza", p:"Fin-ke çe vi-ta çe spe-ran-tsa", en:"While there's life, there's hope.", tr:"Çıkmadık candan umut kesilmez."},
+                {t:"Chi trova un amico trova un tesoro", p:"Ki tro-va un a-mi-ko...", en:"He who finds a friend finds a treasure.", tr:"Gerçek bir dost bulan, hazine bulmuş demektir."},
+                {t:"Il lupo perde il pelo ma non il vizio", p:"İl lu-po per-de il pe-lo...", en:"A leopard can't change its spots.", tr:"Can çıkar, huy çıkmaz. (Kelime: Kurt tüyünü kaybeder ama huyunu değil)"},
+                {t:"L'abito non fa il monaco", p:"La-bi-to non fa il mo-na-ko", en:"Clothes do not make the man.", tr:"Görünüşe aldanmamak gerekir. (Kelime: Kıyafet keşişi yapmaz)"},
+                {t:"Occhio non vede, cuore non duole", p:"Ok-ki-yo non ve-de...", en:"Out of sight, out of mind.", tr:"Gözden ırak olan gönülden ırak olur. (Göz görmezse kalp acımaz)"},
+                {t:"Non è tutto oro quel che luccica", p:"Non e tut-to o-ro...", en:"All that glitters is not gold.", tr:"Parlayan her şey altın değildir."},
+                {t:"Chi la fa l'aspetti", p:"Ki la fa las-pet-ti", en:"What goes around comes around.", tr:"Eden bulur."},
+                {t:"A caval donato non si guarda in bocca", p:"A ka-val do-na-to...", en:"Don't look a gift horse in the mouth.", tr:"Beleş atın dişine bakılmaz."},
+                {t:"Tra i due litiganti il terzo gode", p:"Tra i du-e li-ti-gan-ti...", en:"When two fight, the third wins.", tr:"İki kişi kavga ederken üçüncü kârlı çıkar."},
+                {t:"Il mattino ha l'oro in bocca", p:"İl mat-ti-no a lo-ro in bok-ka", en:"The early bird catches the worm.", tr:"Erken kalkan yol alır. (Kelime: Sabahın ağzında altın vardır)"},
+                {t:"Chi va piano va sano e va lontano", p:"Ki va pya-no...", en:"Slow and steady wins the race.", tr:"Yavaş ama sağlam giden uzağa varır."},
+                {t:"Ospite tre giorni è pesce", p:"Os-pi-te tre cyor-ni e peş-şe", en:"Guests, like fish, stink after three days.", tr:"Misafirlik üç gündür, fazlası sıkar. (Kelime: Misafir üç gün sonra balık gibi kokar)"},
+                {t:"Volere è potere", p:"Vo-le-re e po-te-re", en:"Where there's a will, there's a way.", tr:"İstemek, başarmanın yarısıdır (İstemek yapabilmektir)."},
+                {t:"Non fasciarsi la testa prima di essersela rotta", p:"Non faş-şar-si la tes-ta...", en:"Don't cross the bridge until you come to it.", tr:"Dereyi görmeden paçaları sıvama. (Kafanı kırmadan önce sargı bağlama)"},
+                {t:"L'erba del vicino è sempre più verde", p:"Ler-ba del vi-çi-no...", en:"The grass is always greener on the other side.", tr:"Komşunun tavuğu komşuya kaz görünür. (Komşunun çimeni hep daha yeşildir)"},
+                {t:"Buon sangue non mente", p:"Bu-on san-gue non men-te", en:"It runs in the family. (Lit: Good blood doesn't lie)", tr:"Armut dibine düşer. (İyi kan yalan söylemez)"},
+                {t:"Chi troppo vuole nulla stringe", p:"Ki trop-po vu-o-le...", en:"He who wants too much grasps nothing.", tr:"Aza kanaat etmeyen çoğu bulamaz. (Çok isteyen hiçbir şey tutamaz)"},
+                {t:"Paese che vai, usanza che trovi", p:"Pa-e-ze ke vay...", en:"When in Rome, do as the Romans do.", tr:"Nereye gidersen, oranın adetine uy."},
+                {t:"Meglio un uovo oggi che una gallina domani", p:"Mel-yo un u-o-vo...", en:"A bird in the hand is worth two in the bush.", tr:"Bugünkü tavuk, yarınki kazdan iyidir. (Bugün bir yumurta yarınki tavuktan iyidir)"},
+                {t:"Can che abbaia non morde", p:"Kan ke ab-ba-ya non mor-de", en:"A barking dog doesn't bite.", tr:"Havlayan köpek ısırmaz."},
+                {t:"Patti chiari, amicizia lunga", p:"Pat-ti kya-ri...", en:"Clear agreements make long friendships.", tr:"Hesaplar net olursa, dostluk uzun sürer."}
+            ],
+            specials: [
+                {t:"Dolce far niente", p:"Dol-çe far nyen-te", en:"The sweetness of doing nothing.", tr:"Hiçbir şey yapmamanın tatlılığı."},
+                {t:"Passeggiata", p:"Pas-sec-ca-ta", en:"A leisurely evening stroll.", tr:"Rahatlatıcı akşam yürüyüşü."},
+                {t:"Al dente", p:"Al den-te", en:"Pasta cooked to be firm to the bite.", tr:"Makarnanın dişe dokunacak dirilikte pişirilmesi."},
+                {t:"Sprezzatura", p:"Spret-tsa-tu-ra", en:"Studied carelessness; making things look effortless.", tr:"Çabasız şıklık, zor bir şeyi kolaymış gibi yapma sanatı."},
+                {t:"Mamma mia", p:"Mam-ma mi-ya", en:"An exclamation of surprise or exasperation.", tr:"Şaşkınlık veya bıkkınlık ünlemi."},
+                {t:"Gesti", p:"Ces-ti", en:"Italian hand gestures, essential for communication.", tr:"İletişimde vazgeçilmez olan İtalyan el hareketleri."},
+                {t:"Aperitivo", p:"A-pe-ri-ti-vo", en:"A pre-meal drink accompanied by small snacks.", tr:"Yemek öncesi atıştırmalıklarla içilen içki/sosyalleşme zamanı."},
+                {t:"Bella figura", p:"Bel-la fi-gu-ra", en:"To make a good impression (appearance and behavior).", tr:"İyi bir izlenim bırakmak, şık ve saygın görünmek."},
+                {t:"Campanilismo", p:"Kam-pa-ni-liz-mo", en:"Strong attachment to one's town/region (bell tower).", tr:"Kendi kasabasına/bölgesine aşırı bağlılık (Kilise çan kulesi sevgisi)."},
+                {t:"Magari", p:"Ma-ga-ri", en:"'If only', 'I wish', or 'Maybe'.", tr:"'Keşke', 'Belki', 'Umarım' anlamlarında kullanılan sihirli kelime."},
+                {t:"Abbiocco", p:"Ab-bi-yok-ko", en:"The drowsy feeling you get after eating a big meal.", tr:"Büyük bir yemekten sonra çöken uyku ağırlığı."},
+                {t:"Pennichella", p:"Pen-ni-kel-la", en:"An afternoon nap.", tr:"Öğleden sonra kestirmesi (Siesta'nın İtalyancası)."}
+            ],
+            grammar: [
+                {
+                    title: {en: "Plurals (-i / -e)", tr: "Çoğullar (-i / -e)"},
+                    exp: {en: "Masculine nouns ending in '-o' change to '-i'. Feminine nouns ending in '-a' change to '-e'.", tr: "'-o' ile biten eril isimler '-i' ile, '-a' ile biten dişil isimler '-e' ile çoğul olur."},
+                    ex: "Gatto -> Gatti (Cats), Donna -> Donne (Women)",
+                    q: {en: "What is the plural of 'Ragazzo' (Boy)?", tr: "'Ragazzo' (Erkek çocuk) kelimesinin çoğulu nedir?"},
+                    options: ["Ragazzi", "Ragazze", "Ragazzo", "Ragazzos"],
+                    ans: 0
+                },
+                {
+                    title: {en: "Adjective Agreement", tr: "Sıfat Uyumu"},
+                    exp: {en: "Adjectives must match the noun in gender and number.", tr: "Sıfatlar, tanımladıkları ismin cinsiyetine ve çoğul durumuna uymak zorundadır."},
+                    ex: "Libro rosso (Red book) -> Libri rossi (Red books)",
+                    q: {en: "How do you say 'Beautiful girl' (Bella)?", tr: "'Güzel kız' (Ragazza) nasıl denir?"},
+                    options: ["Ragazza bello", "Ragazza bella", "Ragazza belli", "Ragazzo bella"],
+                    ans: 1
+                },
+                {
+                    title: {en: "Definite Articles (Il, La, Lo)", tr: "Belirli Tanımlıklar (Il, La, Lo)"},
+                    exp: {en: "'Il' is for most masculine nouns, 'La' for feminine, 'Lo' for masculine starting with s+consonant or z/ps/gn.", tr: "'Il' çoğu eril için, 'La' dişil için, 'Lo' s+ünsüz veya z/ps/gn ile başlayan eriller için kullanılır."},
+                    ex: "Il gatto, La donna, Lo studente",
+                    q: {en: "Which article goes with 'studente'?", tr: "'studente' (öğrenci) kelimesi için hangi artikel kullanılır?"},
+                    options: ["Il", "La", "Lo", "Le"],
+                    ans: 2
+                }
+            ]
+        },
+        pt: {
+            words: [
+                {t:"Olá", p:"O-la", en:"Hello", tr:"Merhaba"}, {t:"Adeus", p:"A-de-us", en:"Goodbye", tr:"Hoşçakal"},
+                {t:"Obrigado", p:"Ob-ri-ga-du", en:"Thank you (said by a male)", tr:"Teşekkürler"}, {t:"Por favor", p:"Por fa-vor", en:"Please", tr:"Lütfen"},
+                {t:"Sim", p:"Sin", en:"Yes", tr:"Evet"}, {t:"Não", p:"Naun", en:"No", tr:"Hayır"},
+                {t:"Água", p:"A-gua", en:"Water", tr:"Su"}, {t:"Pão", p:"Paun", en:"Bread", tr:"Ekmek"},
+                {t:"Amigo", p:"A-mi-gu", en:"Friend", tr:"Arkadaş"}, {t:"Família", p:"Fa-mi-li-ya", en:"Family", tr:"Aile"},
+                {t:"Tempo", p:"Tem-pu", en:"Time", tr:"Zaman"}, {t:"Dia", p:"Di-ya", en:"Day", tr:"Gün"},
+                {t:"Noite", p:"Noy-t", en:"Night", tr:"Gece"}, {t:"Sol", p:"Sol", en:"Sun", tr:"Güneş"},
+                {t:"Lua", p:"Lu-wa", en:"Moon", tr:"Ay"}, {t:"Casa", p:"Ka-za", en:"House", tr:"Ev"},
+                {t:"Gato", p:"Ga-tu", en:"Cat", tr:"Kedi"}, {t:"Cão", p:"Kaun", en:"Dog", tr:"Köpek"},
+                {t:"Mulher", p:"Mul-yer", en:"Woman", tr:"Kadın"}, {t:"Homem", p:"O-men", en:"Man", tr:"Adam"},
+                {t:"Menino", p:"Me-ni-nu", en:"Boy", tr:"Erkek çocuk"}, {t:"Menina", p:"Me-ni-na", en:"Girl", tr:"Kız çocuk"},
+                {t:"Livro", p:"Liv-ru", en:"Book", tr:"Kitap"}, {t:"Mesa", p:"Me-za", en:"Table", tr:"Masa"},
+                {t:"Cadeira", p:"Ka-dey-ra", en:"Chair", tr:"Sandalye"}, {t:"Porta", p:"Por-ta", en:"Door", tr:"Kapı"},
+                {t:"Janela", p:"Ja-ne-la", en:"Window", tr:"Pencere"}, {t:"Carro", p:"Ka-hu", en:"Car", tr:"Araba"},
+                {t:"Rua", p:"Hu-wa", en:"Street", tr:"Sokak"}, {t:"Cidade", p:"Si-da-d", en:"City", tr:"Şehir"},
+                {t:"País", p:"Pa-is", en:"Country", tr:"Ülke"}, {t:"Mundo", p:"Mun-du", en:"World", tr:"Dünya"},
+                {t:"Escola", p:"Es-ko-la", en:"School", tr:"Okul"}, {t:"Trabalho", p:"Tra-bal-yu", en:"Work", tr:"İş"},
+                {t:"Dinheiro", p:"Di-nyey-ru", en:"Money", tr:"Para"}, {t:"Comida", p:"Ku-mi-da", en:"Food", tr:"Yemek"},
+                {t:"Carne", p:"Kar-n", en:"Meat", tr:"Et"}, {t:"Peixe", p:"Pey-ş", en:"Fish", tr:"Balık"},
+                {t:"Fruta", p:"Fru-ta", en:"Fruit", tr:"Meyve"}, {t:"Vegetal", p:"Ve-je-tal", en:"Vegetable", tr:"Sebze"},
+                {t:"Vermelho", p:"Ver-mel-yu", en:"Red", tr:"Kırmızı"}, {t:"Azul", p:"A-zul", en:"Blue", tr:"Mavi"},
+                {t:"Verde", p:"Ver-d", en:"Green", tr:"Yeşil"}, {t:"Amarelo", p:"A-ma-re-lu", en:"Yellow", tr:"Sarı"},
+                {t:"Branco", p:"Bran-ku", en:"White", tr:"Beyaz"}, {t:"Preto", p:"Pre-tu", en:"Black", tr:"Siyah"},
+                {t:"Grande", p:"Gran-d", en:"Big", tr:"Büyük"}, {t:"Pequeno", p:"Pe-ke-nu", en:"Small", tr:"Küçük"},
+                {t:"Bom", p:"Bon", en:"Good", tr:"İyi"}, {t:"Mau", p:"Mau", en:"Bad", tr:"Kötü"},
+                {t:"Feliz", p:"Fe-liz", en:"Happy", tr:"Mutlu"}, {t:"Triste", p:"Tris-t", en:"Sad", tr:"Üzgün"},
+                {t:"Cansado", p:"Kan-sa-du", en:"Tired", tr:"Yorgun"}, {t:"Doente", p:"Du-en-t", en:"Sick", tr:"Hasta"},
+                {t:"Quente", p:"Ken-t", en:"Hot", tr:"Sıcak"}, {t:"Frio", p:"Fri-u", en:"Cold", tr:"Soğuk"},
+                {t:"Novo", p:"No-vu", en:"New", tr:"Yeni"}, {t:"Velho", p:"Vel-yu", en:"Old", tr:"Eski"},
+                {t:"Jovem", p:"Jo-ven", en:"Young", tr:"Genç"}, {t:"Rápido", p:"Ha-pi-du", en:"Fast", tr:"Hızlı"},
+                {t:"Lento", p:"Len-tu", en:"Slow", tr:"Yavaş"}, {t:"Difícil", p:"Di-fi-sil", en:"Difficult", tr:"Zor"},
+                {t:"Fácil", p:"Fa-sil", en:"Easy", tr:"Kolay"}, {t:"Verdade", p:"Ver-da-d", en:"Truth", tr:"Gerçek"},
+                {t:"Mentira", p:"Men-ti-ra", en:"Lie", tr:"Yalan"}, {t:"Hoje", p:"O-j", en:"Today", tr:"Bugün"},
+                {t:"Amanhã", p:"A-man-ya", en:"Tomorrow", tr:"Yarın"}, {t:"Ontem", p:"On-ten", en:"Yesterday", tr:"Dün"},
+                {t:"Semana", p:"Se-ma-na", en:"Week", tr:"Hafta"}, {t:"Mês", p:"Mes", en:"Month", tr:"Ay"},
+                {t:"Ano", p:"A-nu", en:"Year", tr:"Yıl"}, {t:"Hora", p:"O-ra", en:"Hour", tr:"Saat"},
+                {t:"Segunda-feira", p:"Se-gun-da-fey-ra", en:"Monday", tr:"Pazartesi"}, {t:"Terça-feira", p:"Ter-sa-fey-ra", en:"Tuesday", tr:"Salı"},
+                {t:"Quarta-feira", p:"Kuar-ta-fey-ra", en:"Wednesday", tr:"Çarşamba"}, {t:"Quinta-feira", p:"Kin-ta-fey-ra", en:"Thursday", tr:"Perşembe"},
+                {t:"Sexta-feira", p:"Ses-ta-fey-ra", en:"Friday", tr:"Cuma"}, {t:"Sábado", p:"Sa-ba-du", en:"Saturday", tr:"Cumartesi"},
+                {t:"Domingo", p:"Du-min-gu", en:"Sunday", tr:"Pazar"}, {t:"Um", p:"Un", en:"One", tr:"Bir"},
+                {t:"Dois", p:"Doys", en:"Two", tr:"İki"}, {t:"Três", p:"Tres", en:"Three", tr:"Üç"},
+                {t:"Quatro", p:"Kua-tru", en:"Four", tr:"Dört"}, {t:"Cinco", p:"Sin-ku", en:"Five", tr:"Beş"},
+                {t:"Seis", p:"Seys", en:"Six", tr:"Altı"}, {t:"Sete", p:"Se-t", en:"Seven", tr:"Yedi"},
+                {t:"Oito", p:"Oy-tu", en:"Eight", tr:"Sekiz"}, {t:"Nove", p:"No-v", en:"Nine", tr:"Dokuz"},
+                {t:"Dez", p:"Dez", en:"Ten", tr:"On"}, {t:"Mãe", p:"May", en:"Mother", tr:"Anne"},
+                {t:"Pai", p:"Pay", en:"Father", tr:"Baba"}, {t:"Irmão", p:"İr-maun", en:"Brother", tr:"Erkek kardeş"},
+                {t:"Irmã", p:"İr-ma", en:"Sister", tr:"Kız kardeş"}, {t:"Mão", p:"Maun", en:"Hand", tr:"El"},
+                {t:"Pé", p:"Pe", en:"Foot", tr:"Ayak"}, {t:"Olho", p:"Ol-yu", en:"Eye", tr:"Göz"},
+                {t:"Boca", p:"Bo-ka", en:"Mouth", tr:"Ağız"}, {t:"Cabeça", p:"Ka-be-sa", en:"Head", tr:"Baş"},
+                {t:"Coração", p:"Ko-ra-saun", en:"Heart", tr:"Kalp"}, {t:"Amor", p:"A-mor", en:"Love", tr:"Aşk"}
+            ],
+            idioms: [
+                {t:"Estar com a pulga atrás da orelha", p:"Es-tar kom a pul-ga a-traz da o-rel-ya", en:"To be suspicious (Lit: to have a flea behind the ear)", tr:"Şüphelenmek. (Kelime: Kulağının arkasında pire olmak)"},
+                {t:"Tirar o cavalinho da chuva", p:"Ti-rar o ka-va-lin-yu da şu-va", en:"Don't hold your breath (Lit: take the little horse out of the rain)", tr:"Boşuna bekleme, umudunu kes. (Kelime: Küçük atı yağmurdan çek)"},
+                {t:"Estar feito ao bife", p:"Es-tar fey-tu au bi-f", en:"To be in trouble (Lit: to be done like a steak)", tr:"Başı belada olmak. (Kelime: Biftek gibi pişmiş olmak)"},
+                {t:"Chorar sobre o leite derramado", p:"Şo-rar sob-re o ley-t de-ra-ma-du", en:"Cry over spilt milk.", tr:"Son pişmanlık fayda etmez. (Kelime: Dökülen sütün ardından ağlamak)"},
+                {t:"Comprar gato por lebre", p:"Kom-prar ga-tu por leb-r", en:"To be deceived (Lit: buy cat for hare)", tr:"Kandırılmak. (Kelime: Tavşan yerine kedi satın almak)"},
+                {t:"Pagar o pato", p:"Pa-gar u pa-tu", en:"To take the blame for someone else. (Lit: Pay the duck)", tr:"Başkasının suçunun cezasını çekmek. (Kelime: Ördeği ödemek)"},
+                {t:"Engolir sapos", p:"En-gu-lir sa-pus", en:"To endure insults without replying. (Lit: Swallow toads)", tr:"Hakaretleri sineye çekmek, yutkunmak. (Kelime: Kurbağa yutmak)"},
+                {t:"Meter a pata na poça", p:"Me-ter a pa-ta na po-sa", en:"To make a blunder. (Lit: Put the paw in the puddle)", tr:"Pot kırmak, çam devirmek. (Kelime: Patisini su birikintisine sokmak)"},
+                {t:"Falar pelos cotovelos", p:"Fa-lar pe-lus ku-tu-ve-lus", en:"To talk too much. (Lit: Talk through the elbows)", tr:"Çok konuşmak. (Kelime: Dirseklerden konuşmak)"},
+                {t:"Procurar chifre em cabeça de cavalo", p:"Pro-ku-rar şif-r en ka-be-sa de ka-va-lu", en:"To look for trouble where there is none. (Lit: Look for horn on horse's head)", tr:"Sorun olmayan yerde sorun aramak. (Kelime: Atın başında boynuz aramak)"},
+                {t:"Pão-duro", p:"Paun du-ru", en:"Stingy person. (Lit: Hard bread)", tr:"Cimri. (Kelime: Sert ekmek)"},
+                {t:"Quebrar o galho", p:"Keb-rar u gal-yu", en:"To do a favor or quick fix. (Lit: Break the branch)", tr:"İdareten bir işi halletmek, yardım etmek. (Kelime: Dalı kırmak)"},
+                {t:"Chutar o balde", p:"Şu-tar u bal-d", en:"To give up or lose one's temper. (Lit: Kick the bucket)", tr:"Pes etmek, öfkeyle her şeyi bırakmak. (Kelime: Kovayı tekmelemek)"},
+                {t:"Estar com a corda no pescoço", p:"Es-tar kom a kor-da nu pes-ko-su", en:"To be in a very difficult situation. (Lit: Have rope around neck)", tr:"Çok zor durumda olmak. (Kelime: Boynunda iple olmak)"},
+                {t:"Mão de vaca", p:"Maun de va-ka", en:"A stingy person. (Lit: Cow's hand)", tr:"Cimri. (Kelime: İnek eli)"},
+                {t:"Pisar na bola", p:"Pi-zar na bo-la", en:"To make a mistake. (Lit: Step on the ball)", tr:"Hata yapmak, pot kırmak. (Kelime: Topun üstüne basmak)"},
+                {t:"Estar com a cabeça nas nuvens", p:"Es-tar kom a ka-be-sa nas nu-vens", en:"To be daydreaming. (Lit: Head in clouds)", tr:"Aklı havada olmak. (Kelime: Kafası bulutlarda olmak)"},
+                {t:"Ir por água abaixo", p:"İr por a-gua a-bay-şu", en:"To fail, go down the drain. (Lit: Go down by water)", tr:"Suya düşmek, başarısız olmak. (Kelime: Suyla aşağı gitmek)"},
+                {t:"Trocar as pernas", p:"Tro-kar as per-nas", en:"To be staggering/drunk. (Lit: Exchange legs)", tr:"Sarhoşluktan yalpalayarak yürümek. (Kelime: Bacakları değiştirmek)"},
+                {t:"Estar com a macaca", p:"Es-tar kom a ma-ka-ka", en:"To be very angry/agitated. (Lit: Be with the monkey)", tr:"Çok sinirli olmak. (Kelime: Maymunla olmak)"},
+                {t:"Lavar as mãos", p:"La-var as mauns", en:"To wash one's hands of a problem.", tr:"Sorumluluktan kaçmak, elini yıkamak."},
+                {t:"Encher chouriços", p:"En-şer şou-ri-sus", en:"To talk nonsense to fill time. (Lit: Fill sausages)", tr:"Zaman doldurmak için boş konuşmak. (Kelime: Sosis doldurmak)"},
+                {t:"Vira-casacas", p:"Vi-ra-ka-za-kas", en:"Turncoat, traitor. (Lit: Coat-turner)", tr:"Dönek. (Kelime: Ceket çeviren)"},
+                {t:"Meter o nariz onde não é chamado", p:"Me-ter u na-riz on-d naun e şa-ma-du", en:"To stick one's nose in others' business.", tr:"Burnunu sokmak."},
+                {t:"Acertar na mouche", p:"A-ser-tar na mu-ş", en:"To hit the bullseye.", tr:"Tam on ikiden vurmak, turnayı gözünden vurmak."}
+            ],
+            proverbs: [
+                {t:"Cão que ladra não morde", p:"Kaun ke lad-ra naun mor-d", en:"A barking dog never bites.", tr:"Havlayan köpek ısırmaz."},
+                {t:"Mais vale um pássaro na mão do que dois a voar", p:"Mays va-l un pa-sa-ru na maun...", en:"A bird in the hand is worth two in the bush.", tr:"Eldeki bir serçe, daldaki iki kuştan iyidir."},
+                {t:"A pressa é inimiga da perfeição", p:"A pre-sa e i-ni-mi-ga da per-fey-saun", en:"Haste makes waste. (Lit: Haste is the enemy of perfection)", tr:"Acele işe şeytan karışır."},
+                {t:"Longe dos olhos, longe do coração", p:"Lon-j dus ol-yus, lon-j du ko-ra-saun", en:"Out of sight, out of mind.", tr:"Gözden ırak olan gönülden ırak olur."},
+                {t:"Água mole em pedra dura tanto bate até que fura", p:"A-gua mo-l em ped-ra du-ra...", en:"Persistent work leads to success. (Lit: Soft water on hard stone beats until it pierces)", tr:"Damlaya damlaya göl olur / Azimle taşı delen suyun gücü değil sürekliliğidir."},
+                {t:"Deus ajuda quem cedo madruga", p:"De-us a-ju-da ken se-du mad-ru-ga", en:"The early bird catches the worm. (Lit: God helps who rises early)", tr:"Erken kalkan yol alır. (Tanrı erken kalkana yardım eder)"},
+                {t:"Grão a grão enche a galinha o papo", p:"Graun a graun en-ş a ga-lin-ya u pa-pu", en:"Little by little, the bird builds its nest. (Lit: Grain by grain the hen fills her crop)", tr:"Damlaya damlaya göl olur. (Taneyle tavuk kursağını doldurur)"},
+                {t:"A cavalo dado não se olha os dentes", p:"A ka-va-lu da-du naun se ol-ya...", en:"Don't look a gift horse in the mouth.", tr:"Beleş atın dişine bakılmaz."},
+                {t:"Quem tem boca vai a Roma", p:"Ken ten bo-ka vay a Ho-ma", en:"If you ask questions, you can get anywhere. (Lit: Who has a mouth goes to Rome)", tr:"Sora sora Bağdat bulunur. (Ağzı olan Roma'ya gider)"},
+                {t:"Quem não arrisca, não petisca", p:"Ken naun a-ris-ka naun pe-tis-ka", en:"Nothing ventured, nothing gained.", tr:"Risk almayan kazanamaz."},
+                {t:"Filho de peixe sabe nadar", p:"Fil-yu de pey-ş sa-b na-dar", en:"Like father, like son. (Lit: Son of a fish knows how to swim)", tr:"Armut dibine düşer. (Balığın oğlu yüzmeyi bilir)"},
+                {t:"Onde há fumo, há fogo", p:"On-d a fu-mu a fo-gu", en:"Where there is smoke, there is fire.", tr:"Ateş olmayan yerden duman çıkmaz."},
+                {t:"De pequenino se torce o pepino", p:"De pe-ke-ni-nu se tor-s u pe-pi-nu", en:"As the twig is bent, so is the tree inclined. (Lit: From small you twist the cucumber)", tr:"Ağaç yaşken eğilir."},
+                {t:"Em terra de cegos, quem tem um olho é rei", p:"En te-ha de se-gus...", en:"In the land of the blind, the one-eyed man is king.", tr:"Körlerin ülkesinde tek gözlü olan kraldır."},
+                {t:"Quem semeia ventos, colhe tempestades", p:"Ken se-mey-a ven-tus kol-y...", en:"As you sow, so shall you reap. (Lit: Who sows winds, reaps storms)", tr:"Rüzgar eken fırtına biçer."},
+                {t:"As aparências iludem", p:"As a-pa-ren-si-yas i-lu-den", en:"Looks can be deceiving.", tr:"Görünüş aldatıcıdır."},
+                {t:"A mentira tem perna curta", p:"A men-ti-ra ten per-na kur-ta", en:"Lies have short legs.", tr:"Yalancının mumu yatsıya kadar yanar."},
+                {t:"Quem ri por último, ri melhor", p:"Ken ri por ul-ti-mu...", en:"He who laughs last, laughs best.", tr:"Son gülen iyi güler."},
+                {t:"Nem tudo que luz é ouro", p:"Nen tu-du ke luz e o-ru", en:"All that glitters is not gold.", tr:"Parlayan her şey altın değildir."},
+                {t:"Os cães ladram e a caravana passa", p:"Us kaens lad-ran e a ka-ra-va-na...", en:"Dogs bark, but the caravan moves on.", tr:"İt ürür, kervan yürür."},
+                {t:"Quem conta um conto, acrescenta um ponto", p:"Ken kon-ta un kon-tu...", en:"Tales grow in the telling. (Lit: Who tells a tale adds a point)", tr:"Dilden dile dolaşan hikaye abartılır."},
+                {t:"A noite é boa conselheira", p:"A noy-t e bo-a kon-sel-yey-ra", en:"Sleep on it. (Lit: The night is a good counselor)", tr:"Sabah ola hayrola. (Gece iyi bir danışmandır)"},
+                {t:"Devagar se vai ao longe", p:"De-va-gar se vay a-u lon-j", en:"Slow and steady wins the race.", tr:"Yavaş ama sağlam giden uzağa varır."},
+                {t:"Mais vale prevenir que remediar", p:"Mays va-l pre-ve-nir ke he-me-di-yar", en:"Prevention is better than cure.", tr:"Önlem almak tedavi etmekten iyidir."},
+                {t:"Quem espera, sempre alcança", p:"Ken es-pe-ra sen-pr al-kan-sa", en:"Good things come to those who wait.", tr:"Sabreden derviş muradına ermiş."}
+            ],
+            specials: [
+                {t:"Saudade", p:"Sau-da-d", en:"A deep emotional state of melancholic longing.", tr:"Derin bir özlem, melankolik hasret."},
+                {t:"Fado", p:"Fa-du", en:"Traditional Portuguese melancholic music genre.", tr:"Geleneksel melankolik Portekiz müziği."},
+                {t:"Azulejo", p:"A-zu-ley-ju", en:"Traditional painted tin-glazed ceramic tilework.", tr:"Geleneksel boyalı seramik karo sanatı."},
+                {t:"Pastel de nata", p:"Pas-tel de na-ta", en:"A Portuguese egg custard tart pastry.", tr:"Meşhur Portekiz yumurtalı kremalı tartı."},
+                {t:"Cafuné", p:"Ka-fu-ne", en:"The act of running one's fingers through someone's hair.", tr:"Birinin saçlarında parmakları gezdirmek, saçını okşamak."},
+                {t:"Desenrascanço", p:"De-zen-ras-kan-su", en:"The ability to quickly solve a problem com limited resources.", tr:"Kısıtlı imkanlarla bir sorunu hızla ve pratik şekilde çözme yeteneği."},
+                {t:"Puxa-saco", p:"Pu-şa sa-ku", en:"A flatterer or bootlicker.", tr:"Dalkavuk, yalaka."},
+                {t:"Ginga", p:"Jin-ga", en:"The fundamental swaying movement in Capoeira.", tr:"Capoeira'daki temel ritmik sallanma hareketi (Brezilya)."},
+                {t:"Gambiarra", p:"Gan-bi-ya-ha", en:"A quick, makeshift repair or hack.", tr:"Geçici, derme çatma ve pratik çözüm/tamir (Brezilya)."},
+                {t:"Bate-papo", p:"Ba-t pa-pu", en:"A friendly chat or conversation.", tr:"Gündelik, arkadaşça sohbet."},
+                {t:"Malandragem", p:"Ma-lan-dra-jen", en:"Street smarts, a lifestyle of cleverness and avoiding hard work.", tr:"Sokak kurnazlığı, kolay yoldan işini halletme sanatı."},
+                {t:"Churrasco", p:"Şu-has-ku", en:"Traditional barbecue event.", tr:"Geleneksel mangal partisi."}
+            ],
+            grammar: [
+                {
+                    title: {en: "Obrigado vs Obrigada", tr: "Obrigado ve Obrigada (Teşekkürler)"},
+                    exp: {en: "Men say 'Obrigado', women say 'Obrigada', regardless of who they are speaking to.", tr: "Teşekkür eden kişi erkekse 'Obrigado', kadınsa 'Obrigada' der."},
+                    ex: "Ele diz: Obrigado. Ela diz: Obrigada.",
+                    q: {en: "If Maria wants to say 'Thank you', what should she say?", tr: "Maria 'Teşekkür ederim' demek isterse hangisini kullanmalıdır?"},
+                    options: ["Obrigado", "Obrigada", "Obrigados", "Obrigadas"],
+                    ans: 1
+                },
+                {
+                    title: {en: "Gendered Articles", tr: "Cinsiyetli Tanımlıklar (O, A)"},
+                    exp: {en: "'O' is the masculine 'the', 'A' is the feminine 'the'.", tr: "Eril kelimeler için 'O', dişil kelimeler için 'A' kullanılır."},
+                    ex: "O menino (The boy), A menina (The girl)",
+                    q: {en: "Which article goes with 'Casa' (House - feminine)?", tr: "Dişil olan 'Casa' (Ev) için hangi artikel kullanılır?"},
+                    options: ["O", "A", "Os", "As"],
+                    ans: 1
+                },
+                {
+                    title: {en: "Ser vs Estar", tr: "Ser ve Estar (Olmak)"},
+                    exp: {en: "Like Spanish, Portuguese uses 'Ser' for permanent states and 'Estar' for temporary ones.", tr: "İspanyolca gibi, 'Ser' kalıcı durumlar, 'Estar' geçici durumlar için kullanılır."},
+                    ex: "Eu sou português (I am Portuguese), Eu estou feliz (I am happy)",
+                    q: {en: "Which verb is used for temporary emotions?", tr: "Geçici duygular için hangi fiil kullanılır?"},
+                    options: ["Ser", "Estar", "Ter", "Ir"],
+                    ans: 1
+                }
+            ]
+        }
+,
         fr: {
             words: [
                 {t:"Maison", p:"Me-zon", en:"House", tr:"Ev"}, {t:"Chat", p:"Şa", en:"Cat", tr:"Kedi"}, {t:"Chien", p:"Şiyen", en:"Dog", tr:"Köpek"},
@@ -459,7 +1144,35 @@
                 {t:"Carte blanche", p:"Kart blanş", en:"Complete freedom to act. (Lit: Blank card)", tr:"Tam yetki, açık çek. (Beyaz kart)"},
                 {t:"Chef-d'œuvre", p:"Şef döv-r", en:"A masterpiece.", tr:"Başyapıt."}
             ]
-        },
+        ,
+
+            grammar: [
+                {
+                    title: {en: "Plurals (-s)", tr: "Çoğullar (-s)"},
+                    exp: {en: "In French, you usually add an 's' to the end of a noun to make it plural.", tr: "Fransızcada genellikle ismin sonuna 's' eklenerek çoğul yapılır."},
+                    ex: "Le chat -> Les chats (The cat -> The cats)",
+                    q: {en: "What is the plural of 'la maison'?", tr: "'la maison' (ev) kelimesinin çoğulu nedir?"},
+                    options: ["les maisons", "les maison", "la maisons", "les maisones"],
+                    ans: 0
+                },
+                {
+                    title: {en: "Definite Articles", tr: "Belirli Tanımlıklar (Artikeller)"},
+                    exp: {en: "'Le' is for masculine, 'La' is for feminine, and 'Les' is for plurals.", tr: "Eril kelimeler için 'Le', dişil kelimeler için 'La', çoğullar için 'Les' kullanılır."},
+                    ex: "Le garçon (The boy), La fille (The girl), Les enfants (The children)",
+                    q: {en: "Which article goes with the feminine word 'voiture' (car)?", tr: "Dişil olan 'voiture' (araba) kelimesi hangi artikeli alır?"},
+                    options: ["Le", "La", "Les", "Un"],
+                    ans: 1
+                },
+                {
+                    title: {en: "Être (To be)", tr: "Être (Olmak) Fiili"},
+                    exp: {en: "'Je suis' means 'I am', 'Tu es' means 'You are', 'Il/Elle est' means 'He/She is'.", tr: "'Je suis' (Ben ..-im), 'Tu es' (Sen ..-sin), 'Il/Elle est' (O ..-dir)."},
+                    ex: "Je suis heureux (I am happy)",
+                    q: {en: "How do you say 'You are'?", tr: "'Sen ..-sin' nasıl söylenir?"},
+                    options: ["Je suis", "Tu es", "Il est", "Vous êtes"],
+                    ans: 1
+                }
+            ]
+},
         mn: {
             words: [
                 {t:"Гэр", p:"Ger", en:"Home/Yurt", tr:"Ev/Çadır"}, {t:"Ус", p:"Us", en:"Water", tr:"Su"}, {t:"Морь", p:"Mori", en:"Horse", tr:"At"},
@@ -565,7 +1278,35 @@
                 {t:"Зуд", p:"Zud", en:"Severe winter disaster causing livestock starvation.", tr:"Hayvanların donarak/açlıktan öldüğü felaket kışı."},
                 {t:"Тооно", p:"Toono", en:"The circular roof opening of a traditional Ger.", tr:"Geleneksel çadırın dairesel tepe/çatı açıklığı."}
             ]
-        },
+        ,
+
+            grammar: [
+                {
+                    title: {en: "Plurals", tr: "Çoğullar (-ууд, -үүд, -нууд, -нүүд)"},
+                    exp: {en: "Mongolian plurals depend on vowel harmony and the ending of the word.", tr: "Moğolca çoğul ekleri ünlü uyumuna ve kelimenin son harfine göre değişir."},
+                    ex: "Ном [Nom] (Book) -> Номууд [Nomuud] (Books), Гэр [Ger] (Yurt) -> Гэрүүд [Gerüüd] (Yurts)",
+                    q: {en: "What is the plural of 'Гэр' [Ger]?", tr: "'Гэр' [Ger] (Çadır/Ev) kelimesinin çoğulu nedir?"},
+                    options: ["Гэрүүд [Gerüüd]", "Гэрууд [Geruud]", "Гэрнууд [Gernuud]", "Гэрт [Gert]"],
+                    ans: 0
+                },
+                {
+                    title: {en: "Question Words", tr: "Soru Kelimeleri"},
+                    exp: {en: "Хэн [Khen] (Who), Юу [Yuu] (What), Хаана [Khaana] (Where).", tr: "Хэн [Khen] (Kim), Юу [Yuu] (Ne), Хаана [Khaana] (Nerede)."},
+                    ex: "Энэ юу вэ? [Ene yuu ve?] (What is this?)",
+                    q: {en: "Which word means 'Who'?", tr: "Hangi kelime 'Kim' anlamına gelir?"},
+                    options: ["Юу [Yuu]", "Хэн [Khen]", "Хаана [Khaana]", "Хэзээ [Khezee]"],
+                    ans: 1
+                },
+                {
+                    title: {en: "Genitive Case", tr: "Tamlayan (İlgi) Eki"},
+                    exp: {en: "Indicates possession. Suffixes like -ын [-yn], -ийн [-iin] are used based on vowel harmony.", tr: "İyelik/sahiplik bildirir. Ünlü uyumuna göre -ын [-yn], -ийн [-iin] ekleri kullanılır."},
+                    ex: "Аав [Aav] (Father) -> Аавын [Aavyn] (Father's)",
+                    q: {en: "How do you say 'Mother's' (Ээж [Eej])?", tr: "'Annenin' (Ээж [Eej]) nasıl denir?"},
+                    options: ["Ээжид [Eejid]", "Ээжээс [Eejees]", "Ээжийн [Eejiin]", "Ээжтэй [Eejtei]"],
+                    ans: 2
+                }
+            ]
+},
         tr: {
             words: [
                 {t:"Teşekkürler", p:"Teh-shek-kur-ler", en:"Thank you", tr:"Teşekkürler"}, {t:"Arkadaş", p:"Ar-ka-dash", en:"Friend", tr:"Arkadaş"},
@@ -672,7 +1413,35 @@
                 {t:"Elinize sağlık", p:"E-li-ni-ze sa-lik", en:"'Health to your hands' (Said to the cook).", tr:"Yemek yapan kişiye veya bir işi başarana söylenen söz."},
                 {t:"Hayırlısı", p:"Ha-yir-li-si", en:"Whatever is best (Leaving outcome to fate).", tr:"En iyisi neyse o olsun dileği."}
             ]
-        }
+        ,
+
+            grammar: [
+                {
+                    title: {en: "Plurals (-lar / -ler)", tr: "Çoğullar (-lar / -ler)"},
+                    exp: {en: "Add '-lar' if the last vowel is hard (a, ı, o, u), and '-ler' if it's soft (e, i, ö, ü).", tr: "Son ünlü kalınsa (a, ı, o, u) '-lar', inceyse (e, i, ö, ü) '-ler' eklenir."},
+                    ex: "Araba -> Arabalar, Ev -> Evler",
+                    q: {en: "What is the plural of 'Kedi' (Cat)?", tr: "'Kedi' kelimesinin çoğulu nedir?"},
+                    options: ["Kedilar", "Kediler", "Kedi", "Kedilerden"],
+                    ans: 1
+                },
+                {
+                    title: {en: "Question Particle (mı, mi, mu, mü)", tr: "Soru Eki (mı, mi, mu, mü)"},
+                    exp: {en: "The question particle is written separately and follows vowel harmony.", tr: "Soru eki ayrı yazılır ve büyük ünlü uyumuna uyar."},
+                    ex: "O doktor mu? (Is he a doctor?)",
+                    q: {en: "Which is correct?", tr: "Hangisi doğrudur?"},
+                    options: ["Güzel mi?", "Güzel mı?", "Güzel mu?", "Güzelmı?"],
+                    ans: 0
+                },
+                {
+                    title: {en: "Locative Case (-da / -de / -ta / -te)", tr: "Bulunma Durumu Eki (-da / -de / -ta / -te)"},
+                    exp: {en: "Means 'in, on, at'. Use -ta/-te after hard consonants (p, ç, t, k, s, ş, h, f).", tr: "'İçinde, üstünde, neresinde' anlamı katar. Sert ünsüzlerden sonra -ta/-te olur."},
+                    ex: "Evde (at home), Sokakta (on the street)",
+                    q: {en: "How do you say 'at school' (Okul)?", tr: "'Okulda' nasıl denir?"},
+                    options: ["Okulde", "Okulda", "Okulta", "Okulte"],
+                    ans: 1
+                }
+            ]
+}
     };
 
     /* =========================================================================
@@ -800,6 +1569,7 @@
         document.getElementById('ui-lbl-word').textContent = dict.lblWord;
         document.getElementById('ui-lbl-idiom').textContent = dict.lblIdiom;
         document.getElementById('ui-lbl-proverb').textContent = dict.lblProverb;
+        document.getElementById('ui-lbl-grammar').textContent = dict.lblGrammar;
         document.getElementById('ui-lbl-challenge').textContent = dict.lblChallenge;
         document.getElementById('ui-quiz-q').textContent = dict.quizQ;
         document.getElementById('next-btn').textContent = dict.nextBtn;
@@ -837,6 +1607,16 @@
         injectCard('idiom', idiom);
         injectCard('proverb', proverb);
         injectCard('special', special);
+
+        const grammar = db.grammar[(doy + 45) % db.grammar.length];
+
+        document.getElementById('grammar-title').textContent = grammar.title[state.interface];
+        document.getElementById('grammar-exp').textContent = grammar.exp[state.interface];
+        document.getElementById('grammar-ex').textContent = grammar.ex;
+        document.getElementById('grammar-q').textContent = grammar.q[state.interface];
+        
+        setupGrammarQuiz(grammar);
+
     }
 
     function injectCard(id, data) {
@@ -925,6 +1705,38 @@
     /* =========================================================================
        6. QUIZ LOGIC
     ========================================================================= */
+    function setupGrammarQuiz(grammar) {
+        const container = document.getElementById('grammar-options');
+        const feedback = document.getElementById('grammar-feedback');
+        const dict = UI_I18N[state.interface];
+        
+        container.innerHTML = '';
+        feedback.textContent = '';
+        
+        grammar.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'grammar-btn';
+            btn.textContent = opt;
+            
+            btn.onclick = () => {
+                document.querySelectorAll('.grammar-btn').forEach(b => b.disabled = true);
+                if(idx === grammar.ans) {
+                    btn.classList.add('correct');
+                    feedback.textContent = dict.correct;
+                    feedback.style.color = "var(--correct)";
+                } else {
+                    btn.classList.add('wrong');
+                    feedback.textContent = `${dict.wrong} ${grammar.options[grammar.ans]}`;
+                    feedback.style.color = "var(--wrong)";
+                    Array.from(container.children).forEach((c, i) => {
+                        if(i === grammar.ans) c.classList.add('correct');
+                    });
+                }
+            };
+            container.appendChild(btn);
+        });
+    }
+
     function setupQuiz() {
         const container = document.getElementById('quiz-options');
         const feedback = document.getElementById('quiz-feedback');
